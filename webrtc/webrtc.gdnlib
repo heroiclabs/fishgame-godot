@@ -1,0 +1,22 @@
+[general]
+
+singleton=true
+reloadable=false
+load_once=true
+symbol_prefix="godot_"
+
+[entry]
+
+OSX.64 = "res://webrtc/lib/libwebrtc_native.osx.release.64.dylib"
+Windows.64="res://webrtc/lib/webrtc_native.windows.release.64.dll"
+Windows.32="res://webrtc/lib/webrtc_native.windows.release.32.dll"
+X11.64="res://webrtc/lib/libwebrtc_native.linux.release.64.so"
+X11.32="res://webrtc/lib/libwebrtc_native.linux.release.32.so"
+
+[dependencies]
+
+OSX.64 = [  ]
+Windows.64=[  ]
+Windows.32=[  ]
+X11.64=[  ]
+X11.32=[  ]

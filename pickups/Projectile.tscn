@@ -1,0 +1,43 @@
+[gd_scene load_steps=6 format=2]
+
+[ext_resource path="res://assets/kenney-platform-deluxe/request.png" type="Texture" id=1]
+[ext_resource path="res://pickups/Projectile.gd" type="Script" id=2]
+[ext_resource path="res://components/Hitbox.tscn" type="PackedScene" id=3]
+
+[sub_resource type="CircleShape2D" id=1]
+radius = 5.0
+
+[sub_resource type="Gradient" id=2]
+colors = PoolColorArray( 0.611765, 0.45098, 0.682353, 0, 0.611765, 0.45098, 0.682353, 1 )
+
+[node name="Projectile" type="Area2D"]
+collision_layer = 0
+collision_mask = 3
+script = ExtResource( 2 )
+
+[node name="Sprite" type="Sprite" parent="."]
+visible = false
+texture = ExtResource( 1 )
+region_enabled = true
+region_rect = Rect2( 521, 29, 10, 10 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource( 1 )
+
+[node name="RayCast2D" type="RayCast2D" parent="."]
+cast_to = Vector2( 25, 0 )
+collision_mask = 3
+
+[node name="Trail" type="Line2D" parent="."]
+width = 4.0
+default_color = Color( 0.611765, 0.45098, 0.682353, 1 )
+gradient = SubResource( 2 )
+begin_cap_mode = 2
+end_cap_mode = 2
+
+[node name="Hitbox" parent="." instance=ExtResource( 3 )]
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Hitbox"]
+shape = SubResource( 1 )
+[connection signal="body_entered" from="." to="." method="_on_Projectile_body_entered"]

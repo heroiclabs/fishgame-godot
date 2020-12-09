@@ -1,0 +1,45 @@
+[gd_scene load_steps=8 format=2]
+
+[ext_resource path="res://assets/kenney-platform-deluxe/request.png" type="Texture" id=1]
+[ext_resource path="res://pickups/Pickup.tscn" type="PackedScene" id=2]
+[ext_resource path="res://pickups/Gun.gd" type="Script" id=3]
+[ext_resource path="res://assets/sounds/shoot.wav" type="AudioStream" id=4]
+[ext_resource path="res://components/Sounds.gd" type="Script" id=5]
+[ext_resource path="res://assets/sounds/empty.wav" type="AudioStream" id=6]
+
+[sub_resource type="CapsuleShape2D" id=1]
+radius = 15.0
+height = 10.0
+
+[node name="Gun" instance=ExtResource( 2 )]
+script = ExtResource( 3 )
+
+[node name="Sprite" type="Sprite" parent="." index="0"]
+position = Vector2( 6, -4.5 )
+texture = ExtResource( 1 )
+region_enabled = true
+region_rect = Rect2( 224, 24, 38, 27 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." index="1"]
+position = Vector2( 5, -7 )
+rotation = 1.5708
+shape = SubResource( 1 )
+
+[node name="ProjectilePosition" type="Position2D" parent="." index="2"]
+position = Vector2( 25, -8 )
+
+[node name="CooldownTimer" type="Timer" parent="." index="3"]
+process_mode = 0
+one_shot = true
+
+[node name="Sounds" type="Node" parent="." index="4"]
+script = ExtResource( 5 )
+
+[node name="Shoot" type="AudioStreamPlayer" parent="Sounds" index="0"]
+stream = ExtResource( 4 )
+bus = "Sound Effects"
+
+[node name="Empty" type="AudioStreamPlayer" parent="Sounds" index="1"]
+stream = ExtResource( 6 )
+bus = "Sound Effects"
+[connection signal="timeout" from="CooldownTimer" to="." method="_on_CooldownTimer_timeout"]

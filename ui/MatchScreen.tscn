@@ -1,0 +1,163 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://ui/MatchScreen.gd" type="Script" id=1]
+[ext_resource path="res://assets/theme.tres" type="Theme" id=2]
+
+[node name="MatchScreen" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 3.0
+margin_top = -1.0
+margin_right = 3.0
+margin_bottom = -1.0
+theme = ExtResource( 2 )
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="PanelContainer" type="PanelContainer" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 50.0
+margin_top = 50.0
+margin_right = -50.0
+margin_bottom = -50.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer"]
+margin_left = 7.0
+margin_top = 7.0
+margin_right = 917.0
+margin_bottom = 493.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+custom_constants/separation = 10
+
+[node name="MatchPanel" type="Panel" parent="PanelContainer/VBoxContainer"]
+margin_right = 910.0
+margin_bottom = 155.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Label" type="Label" parent="PanelContainer/VBoxContainer/MatchPanel"]
+margin_left = 16.0
+margin_top = 50.0
+margin_right = 326.0
+margin_bottom = 98.0
+text = "Find at least"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="SpinBox" type="SpinBox" parent="PanelContainer/VBoxContainer/MatchPanel"]
+margin_left = 327.0
+margin_top = 47.0
+margin_right = 629.0
+margin_bottom = 105.0
+min_value = 2.0
+max_value = 4.0
+value = 2.0
+align = 1
+suffix = "players"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="MatchButton" type="Button" parent="PanelContainer/VBoxContainer/MatchPanel"]
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+margin_left = -187.0
+margin_top = -39.5
+margin_right = -12.0
+margin_bottom = 39.5
+text = "Match"
+__meta__ = {
+"_edit_use_anchors_": true
+}
+
+[node name="CreatePanel" type="Panel" parent="PanelContainer/VBoxContainer"]
+margin_top = 165.0
+margin_right = 910.0
+margin_bottom = 320.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Label" type="Label" parent="PanelContainer/VBoxContainer/CreatePanel"]
+margin_left = 17.0
+margin_top = 52.0
+margin_right = 523.0
+margin_bottom = 100.0
+text = "Create a private match"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="CreateButton" type="Button" parent="PanelContainer/VBoxContainer/CreatePanel"]
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+margin_left = -188.0
+margin_top = -42.5
+margin_right = -13.0
+margin_bottom = 36.5
+text = "Create"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="JoinPanel" type="Panel" parent="PanelContainer/VBoxContainer"]
+margin_top = 330.0
+margin_right = 910.0
+margin_bottom = 486.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Label" type="Label" parent="PanelContainer/VBoxContainer/JoinPanel"]
+margin_left = 19.0
+margin_top = 52.0
+margin_right = 274.0
+margin_bottom = 100.0
+text = "Join match:"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="LineEdit" type="LineEdit" parent="PanelContainer/VBoxContainer/JoinPanel"]
+margin_left = 274.0
+margin_top = 51.0
+margin_right = 560.0
+margin_bottom = 109.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="PasteButton" type="Button" parent="PanelContainer/VBoxContainer/JoinPanel"]
+margin_left = 560.0
+margin_top = 52.0
+margin_right = 687.0
+margin_bottom = 108.0
+text = "Paste"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="JoinButton" type="Button" parent="PanelContainer/VBoxContainer/JoinPanel"]
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+margin_left = -190.0
+margin_top = -40.0
+margin_right = -15.0
+margin_bottom = 39.0
+text = "Join"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+[connection signal="pressed" from="PanelContainer/VBoxContainer/MatchPanel/MatchButton" to="." method="_on_MatchButton_pressed"]
+[connection signal="pressed" from="PanelContainer/VBoxContainer/CreatePanel/CreateButton" to="." method="_on_CreateButton_pressed"]
+[connection signal="pressed" from="PanelContainer/VBoxContainer/JoinPanel/PasteButton" to="." method="_on_PasteButton_pressed"]
+[connection signal="pressed" from="PanelContainer/VBoxContainer/JoinPanel/JoinButton" to="." method="_on_JoinButton_pressed"]

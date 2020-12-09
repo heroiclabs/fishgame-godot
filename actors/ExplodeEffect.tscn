@@ -1,0 +1,59 @@
+[gd_scene load_steps=9 format=2]
+
+[ext_resource path="res://assets/kenney-platform-deluxe/request/rockSmall.png" type="Texture" id=1]
+[ext_resource path="res://actors/ExplodeEffect.gd" type="Script" id=2]
+[ext_resource path="res://actors/ExplodeEffectGradient.tres" type="Gradient" id=3]
+[ext_resource path="res://assets/sounds/explosions/explosion3.wav" type="AudioStream" id=4]
+[ext_resource path="res://components/Sounds.gd" type="Script" id=5]
+[ext_resource path="res://assets/sounds/explosions/explosion2.wav" type="AudioStream" id=6]
+[ext_resource path="res://assets/sounds/explosions/explosion1.wav" type="AudioStream" id=7]
+
+[sub_resource type="Curve" id=1]
+_data = [ Vector2( 0, 1 ), 0.0, 0.0, 0, 0, Vector2( 0.994253, 0.00568175 ), 0.0, 0.0, 0, 0 ]
+
+[node name="ExplodeEffect" type="CPUParticles2D"]
+emitting = false
+one_shot = true
+explosiveness = 1.0
+texture = ExtResource( 1 )
+emission_shape = 2
+emission_rect_extents = Vector2( 10, 1 )
+direction = Vector2( 0, -1 )
+spread = 90.0
+gravity = Vector2( 0, 1500 )
+initial_velocity = 600.0
+initial_velocity_random = 0.5
+angular_velocity = 90.0
+angular_velocity_random = 0.5
+linear_accel = 50.0
+linear_accel_random = 0.5
+scale_amount = 0.75
+scale_amount_random = 0.5
+scale_amount_curve = SubResource( 1 )
+color_ramp = ExtResource( 3 )
+hue_variation = 0.05
+hue_variation_random = 0.5
+script = ExtResource( 2 )
+
+[node name="Timer" type="Timer" parent="."]
+wait_time = 1.5
+one_shot = true
+autostart = true
+
+[node name="Sounds" type="Node" parent="."]
+script = ExtResource( 5 )
+
+[node name="Explode" type="Node" parent="Sounds"]
+
+[node name="Explode1" type="AudioStreamPlayer" parent="Sounds/Explode"]
+stream = ExtResource( 7 )
+bus = "Sound Effects"
+
+[node name="Explode2" type="AudioStreamPlayer" parent="Sounds/Explode"]
+stream = ExtResource( 6 )
+bus = "Sound Effects"
+
+[node name="Explode3" type="AudioStreamPlayer" parent="Sounds/Explode"]
+stream = ExtResource( 4 )
+bus = "Sound Effects"
+[connection signal="timeout" from="Timer" to="." method="_on_Timer_timeout"]

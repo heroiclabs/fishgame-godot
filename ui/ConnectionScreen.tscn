@@ -1,0 +1,169 @@
+[gd_scene load_steps=4 format=2]
+
+[ext_resource path="res://assets/theme.tres" type="Theme" id=1]
+[ext_resource path="res://ui/ConnectionScreen.gd" type="Script" id=2]
+[ext_resource path="res://assets/fonts/monogram.tres" type="DynamicFont" id=3]
+
+[node name="ConnectionScreen" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+theme = ExtResource( 1 )
+script = ExtResource( 2 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="TabContainer" type="TabContainer" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 100.0
+margin_top = 100.0
+margin_right = -100.0
+margin_bottom = -100.0
+
+[node name="Login" type="Control" parent="TabContainer"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 4.0
+margin_top = 66.0
+margin_right = -4.0
+margin_bottom = -4.0
+
+[node name="GridContainer" type="GridContainer" parent="TabContainer/Login"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -375.0
+margin_top = -100.0
+margin_right = 375.0
+margin_bottom = 60.0
+columns = 2
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="EmailLabel" type="Label" parent="TabContainer/Login/GridContainer"]
+margin_top = 5.0
+margin_right = 207.0
+margin_bottom = 53.0
+custom_fonts/font = ExtResource( 3 )
+text = "E-mail:"
+
+[node name="Email" type="LineEdit" parent="TabContainer/Login/GridContainer"]
+margin_left = 211.0
+margin_right = 750.0
+margin_bottom = 58.0
+size_flags_horizontal = 3
+custom_fonts/font = ExtResource( 3 )
+caret_blink = true
+
+[node name="PasswordLabel" type="Label" parent="TabContainer/Login/GridContainer"]
+margin_top = 67.0
+margin_right = 207.0
+margin_bottom = 115.0
+custom_fonts/font = ExtResource( 3 )
+text = "Password:"
+
+[node name="Password" type="LineEdit" parent="TabContainer/Login/GridContainer"]
+margin_left = 211.0
+margin_top = 62.0
+margin_right = 750.0
+margin_bottom = 120.0
+size_flags_horizontal = 3
+custom_fonts/font = ExtResource( 3 )
+secret = true
+caret_blink = true
+
+[node name="LoginButton" type="Button" parent="TabContainer/Login"]
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 300.0
+margin_top = -100.0
+margin_right = -300.0
+margin_bottom = -50.0
+text = "Login"
+
+[node name="Create Account" type="Control" parent="TabContainer"]
+visible = false
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 4.0
+margin_top = 66.0
+margin_right = -4.0
+margin_bottom = -4.0
+
+[node name="GridContainer" type="GridContainer" parent="TabContainer/Create Account"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -375.0
+margin_top = -140.0
+margin_right = 375.0
+margin_bottom = 51.0
+columns = 2
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="UsernameLabel" type="Label" parent="TabContainer/Create Account/GridContainer"]
+margin_top = 5.0
+margin_right = 207.0
+margin_bottom = 53.0
+custom_fonts/font = ExtResource( 3 )
+text = "Username:"
+
+[node name="Username" type="LineEdit" parent="TabContainer/Create Account/GridContainer"]
+margin_left = 211.0
+margin_right = 750.0
+margin_bottom = 58.0
+size_flags_horizontal = 3
+custom_fonts/font = ExtResource( 3 )
+caret_blink = true
+
+[node name="EmailLabel" type="Label" parent="TabContainer/Create Account/GridContainer"]
+margin_top = 67.0
+margin_right = 207.0
+margin_bottom = 115.0
+custom_fonts/font = ExtResource( 3 )
+text = "E-mail:"
+
+[node name="Email" type="LineEdit" parent="TabContainer/Create Account/GridContainer"]
+margin_left = 211.0
+margin_top = 62.0
+margin_right = 750.0
+margin_bottom = 120.0
+size_flags_horizontal = 3
+custom_fonts/font = ExtResource( 3 )
+caret_blink = true
+
+[node name="PasswordLabel" type="Label" parent="TabContainer/Create Account/GridContainer"]
+margin_top = 129.0
+margin_right = 207.0
+margin_bottom = 177.0
+custom_fonts/font = ExtResource( 3 )
+text = "Password:"
+
+[node name="Password" type="LineEdit" parent="TabContainer/Create Account/GridContainer"]
+margin_left = 211.0
+margin_top = 124.0
+margin_right = 750.0
+margin_bottom = 182.0
+size_flags_horizontal = 3
+custom_fonts/font = ExtResource( 3 )
+secret = true
+caret_blink = true
+
+[node name="Create Account" type="Button" parent="TabContainer/Create Account"]
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 300.0
+margin_top = -100.0
+margin_right = -300.0
+margin_bottom = -50.0
+text = "Create Account"
+[connection signal="pressed" from="TabContainer/Login/LoginButton" to="." method="_on_LoginButton_pressed"]
+[connection signal="pressed" from="TabContainer/Create Account/Create Account" to="." method="_on_Create_Account_pressed"]

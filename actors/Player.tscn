@@ -1,0 +1,132 @@
+[gd_scene load_steps=21 format=2]
+
+[ext_resource path="res://actors/player_blue_frames.tres" type="SpriteFrames" id=1]
+[ext_resource path="res://actors/player-states/Hurt.gd" type="Script" id=2]
+[ext_resource path="res://actors/player-states/Dead.gd" type="Script" id=3]
+[ext_resource path="res://actors/player-states/Duck.gd" type="Script" id=4]
+[ext_resource path="res://assets/sounds/jump.wav" type="AudioStream" id=5]
+[ext_resource path="res://components/Sounds.gd" type="Script" id=6]
+[ext_resource path="res://assets/sounds/pickup.wav" type="AudioStream" id=7]
+[ext_resource path="res://assets/sounds/throw.wav" type="AudioStream" id=8]
+[ext_resource path="res://actors/Player.gd" type="Script" id=9]
+[ext_resource path="res://assets/sounds/hurt.wav" type="AudioStream" id=10]
+[ext_resource path="res://actors/player-states/Move.gd" type="Script" id=11]
+[ext_resource path="res://addons/snopek-state-machine/StateMachine.gd" type="Script" id=12]
+[ext_resource path="res://assets/sounds/explosions/explosion3.wav" type="AudioStream" id=13]
+[ext_resource path="res://assets/sounds/explosions/explosion2.wav" type="AudioStream" id=14]
+[ext_resource path="res://actors/player-states/Jump.gd" type="Script" id=15]
+[ext_resource path="res://actors/player-states/Idle.gd" type="Script" id=16]
+[ext_resource path="res://assets/sounds/explosions/explosion1.wav" type="AudioStream" id=17]
+
+[sub_resource type="RectangleShape2D" id=1]
+extents = Vector2( 21, 42 )
+
+[sub_resource type="RectangleShape2D" id=2]
+extents = Vector2( 21, 21 )
+
+[sub_resource type="RectangleShape2D" id=3]
+extents = Vector2( 27, 18 )
+
+[node name="Player" type="KinematicBody2D"]
+collision_layer = 2
+script = ExtResource( 9 )
+
+[node name="Sprite" type="AnimatedSprite" parent="."]
+position = Vector2( -31, -92 )
+frames = ExtResource( 1 )
+animation = "Idle"
+centered = false
+
+[node name="StandingCollisionShape" type="CollisionShape2D" parent="."]
+position = Vector2( 0, -42 )
+shape = SubResource( 1 )
+
+[node name="DuckingCollisionShape" type="CollisionShape2D" parent="."]
+position = Vector2( 0, -21 )
+shape = SubResource( 2 )
+disabled = true
+
+[node name="PickupPosition" type="Position2D" parent="."]
+position = Vector2( 26, -17 )
+
+[node name="PickupArea" type="Area2D" parent="."]
+monitorable = false
+collision_layer = 0
+collision_mask = 8
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="PickupArea"]
+modulate = Color( 0.827451, 0, 1, 1 )
+position = Vector2( 0, -18 )
+shape = SubResource( 3 )
+
+[node name="StateMachine" type="Node" parent="."]
+script = ExtResource( 12 )
+allowed_transitions = "Idle -> Move
+Idle -> Jump
+Idle -> Duck
+Move -> Idle
+Move -> Jump
+Move -> Duck
+Jump -> Idle
+Duck -> Idle
+* -> Hurt
+Hurt -> Idle
+Hurt -> Dead"
+
+[node name="Idle" type="Node" parent="StateMachine"]
+script = ExtResource( 16 )
+
+[node name="Move" type="Node" parent="StateMachine"]
+script = ExtResource( 11 )
+
+[node name="Jump" type="Node" parent="StateMachine"]
+script = ExtResource( 15 )
+
+[node name="Duck" type="Node" parent="StateMachine"]
+script = ExtResource( 4 )
+
+[node name="Hurt" type="Node" parent="StateMachine"]
+script = ExtResource( 2 )
+
+[node name="Timer" type="Timer" parent="StateMachine/Hurt"]
+wait_time = 0.2
+one_shot = true
+
+[node name="Dead" type="Node" parent="StateMachine"]
+script = ExtResource( 3 )
+
+[node name="Sounds" type="Node" parent="."]
+script = ExtResource( 6 )
+
+[node name="Jump" type="AudioStreamPlayer" parent="Sounds"]
+stream = ExtResource( 5 )
+bus = "Sound Effects"
+
+[node name="Pickup" type="AudioStreamPlayer" parent="Sounds"]
+stream = ExtResource( 7 )
+bus = "Sound Effects"
+
+[node name="Throw" type="AudioStreamPlayer" parent="Sounds"]
+stream = ExtResource( 8 )
+bus = "Sound Effects"
+
+[node name="Hurt" type="AudioStreamPlayer" parent="Sounds"]
+stream = ExtResource( 10 )
+bus = "Sound Effects"
+
+[node name="Explode" type="Node" parent="Sounds"]
+
+[node name="Explode1" type="AudioStreamPlayer" parent="Sounds/Explode"]
+stream = ExtResource( 17 )
+bus = "Sound Effects"
+
+[node name="Explode2" type="AudioStreamPlayer" parent="Sounds/Explode"]
+stream = ExtResource( 14 )
+bus = "Sound Effects"
+
+[node name="Explode3" type="AudioStreamPlayer" parent="Sounds/Explode"]
+stream = ExtResource( 13 )
+bus = "Sound Effects"
+[connection signal="frame_changed" from="Sprite" to="." method="_on_Sprite_frame_changed"]
+[connection signal="state_changed" from="StateMachine" to="." method="_on_StateMachine_state_changed"]
+[connection signal="timeout" from="StateMachine/Hurt/Timer" to="StateMachine/Hurt" method="_on_Timer_timeout"]

@@ -1,0 +1,71 @@
+[gd_scene load_steps=14 format=2]
+
+[ext_resource path="res://Main.gd" type="Script" id=1]
+[ext_resource path="res://ui/ConnectionScreen.tscn" type="PackedScene" id=2]
+[ext_resource path="res://Game.tscn" type="PackedScene" id=3]
+[ext_resource path="res://ui/MatchScreen.tscn" type="PackedScene" id=4]
+[ext_resource path="res://UILayer.gd" type="Script" id=5]
+[ext_resource path="res://ui/ReadyScreen.tscn" type="PackedScene" id=6]
+[ext_resource path="res://ui/TitleScreen.tscn" type="PackedScene" id=7]
+[ext_resource path="res://HUD.tscn" type="PackedScene" id=8]
+[ext_resource path="res://Music.gd" type="Script" id=9]
+[ext_resource path="res://assets/music/DOMEFIGHTERS.ogg" type="AudioStream" id=10]
+[ext_resource path="res://assets/music/BUILD UP.ogg" type="AudioStream" id=11]
+[ext_resource path="res://assets/music/FISHSTICKS.ogg" type="AudioStream" id=12]
+[ext_resource path="res://assets/music/THEME #1.ogg" type="AudioStream" id=13]
+
+[node name="Main" type="Node2D"]
+script = ExtResource( 1 )
+
+[node name="Game" parent="." instance=ExtResource( 3 )]
+
+[node name="UILayer" type="CanvasLayer" parent="."]
+script = ExtResource( 5 )
+
+[node name="TitleScreen" parent="UILayer" instance=ExtResource( 7 )]
+visible = false
+
+[node name="ConnectionScreen" parent="UILayer" instance=ExtResource( 2 )]
+visible = false
+
+[node name="MatchScreen" parent="UILayer" instance=ExtResource( 4 )]
+visible = false
+
+[node name="ReadyScreen" parent="UILayer" instance=ExtResource( 6 )]
+visible = false
+
+[node name="HUD" parent="." instance=ExtResource( 8 )]
+
+[node name="Music" type="Node" parent="."]
+script = ExtResource( 9 )
+
+[node name="BuildUp" type="AudioStreamPlayer" parent="Music"]
+stream = ExtResource( 11 )
+bus = "Music"
+
+[node name="DomeFighters" type="AudioStreamPlayer" parent="Music"]
+stream = ExtResource( 10 )
+bus = "Music"
+
+[node name="Fishsticks" type="AudioStreamPlayer" parent="Music"]
+stream = ExtResource( 12 )
+bus = "Music"
+
+[node name="Theme1" type="AudioStreamPlayer" parent="Music"]
+stream = ExtResource( 13 )
+bus = "Music"
+
+[node name="Tween" type="Tween" parent="Music"]
+[connection signal="change_screen" from="UILayer" to="." method="_on_UILayer_change_screen"]
+[connection signal="play_local" from="UILayer/TitleScreen" to="." method="_on_TitleScreen_play_local"]
+[connection signal="play_online" from="UILayer/TitleScreen" to="." method="_on_TitleScreen_play_online"]
+[connection signal="create_account" from="UILayer/ConnectionScreen" to="." method="_on_ConnectionScreen_create_account"]
+[connection signal="login" from="UILayer/ConnectionScreen" to="." method="_on_ConnectionScreen_login"]
+[connection signal="create_match" from="UILayer/MatchScreen" to="." method="_on_MatchScreen_create_match"]
+[connection signal="find_match" from="UILayer/MatchScreen" to="." method="_on_MatchScreen_find_match"]
+[connection signal="join_match" from="UILayer/MatchScreen" to="." method="_on_MatchScreen_join_match"]
+[connection signal="ready_pressed" from="UILayer/ReadyScreen" to="." method="_on_ReadyScreen_ready_pressed"]
+[connection signal="exit" from="HUD" to="." method="_on_HUD_exit"]
+[connection signal="start" from="HUD" to="." method="_on_HUD_start"]
+[connection signal="song_finished" from="Music" to="." method="_on_Music_song_finished"]
+[connection signal="tween_completed" from="Music/Tween" to="Music" method="_on_Tween_tween_completed"]

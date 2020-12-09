@@ -1,0 +1,15 @@
+[remap]
+
+importer="ogg_vorbis"
+type="AudioStreamOGGVorbis"
+path="res://.import/BUILD UP.ogg-04051cabc5d0e6cf4e7f28b1e9c6fbdf.oggstr"
+
+[deps]
+
+source_file="res://assets/music/BUILD UP.ogg"
+dest_files=[ "res://.import/BUILD UP.ogg-04051cabc5d0e6cf4e7f28b1e9c6fbdf.oggstr" ]
+
+[params]
+
+loop=false
+loop_offset=0
