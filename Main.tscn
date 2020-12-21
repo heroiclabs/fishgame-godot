@@ -9,10 +9,10 @@
 [ext_resource path="res://ui/TitleScreen.tscn" type="PackedScene" id=7]
 [ext_resource path="res://HUD.tscn" type="PackedScene" id=8]
 [ext_resource path="res://Music.gd" type="Script" id=9]
-[ext_resource path="res://assets/music/DOMEFIGHTERS.ogg" type="AudioStream" id=10]
-[ext_resource path="res://assets/music/BUILD UP.ogg" type="AudioStream" id=11]
-[ext_resource path="res://assets/music/FISHSTICKS.ogg" type="AudioStream" id=12]
-[ext_resource path="res://assets/music/THEME #1.ogg" type="AudioStream" id=13]
+[ext_resource path="res://assets/music/BUILD UP.ogg" type="AudioStream" id=10]
+[ext_resource path="res://assets/music/THEME #1.ogg" type="AudioStream" id=11]
+[ext_resource path="res://assets/music/DOMEFIGHTERS.ogg" type="AudioStream" id=12]
+[ext_resource path="res://assets/music/FISHSTICKS.ogg" type="AudioStream" id=13]
 
 [node name="Main" type="Node2D"]
 script = ExtResource( 1 )
@@ -40,32 +40,29 @@ visible = false
 script = ExtResource( 9 )
 
 [node name="BuildUp" type="AudioStreamPlayer" parent="Music"]
-stream = ExtResource( 11 )
-bus = "Music"
-
-[node name="DomeFighters" type="AudioStreamPlayer" parent="Music"]
 stream = ExtResource( 10 )
 bus = "Music"
 
-[node name="Fishsticks" type="AudioStreamPlayer" parent="Music"]
+[node name="DomeFighters" type="AudioStreamPlayer" parent="Music"]
 stream = ExtResource( 12 )
 bus = "Music"
 
-[node name="Theme1" type="AudioStreamPlayer" parent="Music"]
+[node name="Fishsticks" type="AudioStreamPlayer" parent="Music"]
 stream = ExtResource( 13 )
 bus = "Music"
 
+[node name="Theme1" type="AudioStreamPlayer" parent="Music"]
+stream = ExtResource( 11 )
+bus = "Music"
+
 [node name="Tween" type="Tween" parent="Music"]
+[connection signal="game_over" from="Game" to="." method="_on_Game_game_over"]
+[connection signal="game_started" from="Game" to="." method="_on_Game_game_started"]
+[connection signal="player_dead" from="Game" to="." method="_on_Game_player_dead"]
 [connection signal="change_screen" from="UILayer" to="." method="_on_UILayer_change_screen"]
 [connection signal="play_local" from="UILayer/TitleScreen" to="." method="_on_TitleScreen_play_local"]
 [connection signal="play_online" from="UILayer/TitleScreen" to="." method="_on_TitleScreen_play_online"]
-[connection signal="create_account" from="UILayer/ConnectionScreen" to="." method="_on_ConnectionScreen_create_account"]
-[connection signal="login" from="UILayer/ConnectionScreen" to="." method="_on_ConnectionScreen_login"]
-[connection signal="create_match" from="UILayer/MatchScreen" to="." method="_on_MatchScreen_create_match"]
-[connection signal="find_match" from="UILayer/MatchScreen" to="." method="_on_MatchScreen_find_match"]
-[connection signal="join_match" from="UILayer/MatchScreen" to="." method="_on_MatchScreen_join_match"]
 [connection signal="ready_pressed" from="UILayer/ReadyScreen" to="." method="_on_ReadyScreen_ready_pressed"]
-[connection signal="exit" from="HUD" to="." method="_on_HUD_exit"]
-[connection signal="start" from="HUD" to="." method="_on_HUD_start"]
+[connection signal="back_button" from="HUD" to="." method="_on_HUD_back_button"]
 [connection signal="song_finished" from="Music" to="." method="_on_Music_song_finished"]
 [connection signal="tween_completed" from="Music/Tween" to="Music" method="_on_Tween_tween_completed"]

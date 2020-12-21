@@ -157,7 +157,4 @@ text = "Join"
 __meta__ = {
 "_edit_use_anchors_": false
 }
-[connection signal="pressed" from="PanelContainer/VBoxContainer/MatchPanel/MatchButton" to="." method="_on_MatchButton_pressed"]
-[connection signal="pressed" from="PanelContainer/VBoxContainer/CreatePanel/CreateButton" to="." method="_on_CreateButton_pressed"]
 [connection signal="pressed" from="PanelContainer/VBoxContainer/JoinPanel/PasteButton" to="." method="_on_PasteButton_pressed"]
-[connection signal="pressed" from="PanelContainer/VBoxContainer/JoinPanel/JoinButton" to="." method="_on_JoinButton_pressed"]

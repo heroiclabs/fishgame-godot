@@ -2,14 +2,14 @@ extends CanvasLayer
 
 signal change_screen (name, screen)
 
-var current_screen_name : String = ''
+var current_screen_name: String = ''
 var _is_ready := false
 
-func _ready():
+func _ready() -> void:
 	show_screen("TitleScreen")
 	_is_ready = true
 
-func show_screen(name: String, args: Array = []):
+func show_screen(name: String, args: Array = []) -> void:
 	hide_screen()
 	var screen = get_node(name)
 	screen.visible = true
@@ -19,7 +19,7 @@ func show_screen(name: String, args: Array = []):
 	if _is_ready:
 		emit_signal("change_screen", name, screen)
 
-func hide_screen():
+func hide_screen() -> void:
 	for child in get_children():
 		child.visible = false
 	current_screen_name = ''

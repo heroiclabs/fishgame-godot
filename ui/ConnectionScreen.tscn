@@ -84,6 +84,9 @@ margin_top = -100.0
 margin_right = -300.0
 margin_bottom = -50.0
 text = "Login"
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="Create Account" type="Control" parent="TabContainer"]
 visible = false

@@ -107,7 +107,7 @@ func reload_map() -> void:
 	camera.limit_top = map_rect.position.y
 	camera.limit_right = map_rect.position.x + map_rect.size.x
 
-func kill_player(player_id):
+func kill_player(player_id) -> void:
 	var player_node = players_node.get_node(str(player_id))
 	if player_node:
 		if player_node.has_method("die"):
@@ -118,7 +118,7 @@ func kill_player(player_id):
 			player_node.queue_free()
 			_on_player_dead(player_id)
 
-func _on_player_dead(player_id):
+func _on_player_dead(player_id) -> void:
 	emit_signal("player_dead", player_id)
 	
 	players_alive.erase(player_id)

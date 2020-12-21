@@ -9,12 +9,10 @@ NAKAMA_SERVER_KEY=$(base64 -d <<< "$NAKAMA_SERVER_KEY")
 cat << EOF > autoload/Build.gd
 extends Node
 
-var NAKAMA_HOST = '$NAKAMA_HOST'
-var NAKAMA_PORT = $NAKAMA_PORT
-var NAKAMA_SERVER_KEY = '$NAKAMA_SERVER_KEY'
-var NAKAMA_USE_SSL = true
-
-var DVORAK := false
+const NAKAMA_HOST := '$NAKAMA_HOST'
+const NAKAMA_PORT := $NAKAMA_PORT
+const NAKAMA_SERVER_KEY := '$NAKAMA_SERVER_KEY'
+const NAKAMA_USE_SSL := true
 
 EOF
 

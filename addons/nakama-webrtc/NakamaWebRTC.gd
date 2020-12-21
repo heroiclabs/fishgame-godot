@@ -4,9 +4,9 @@ extends Node
 var min_players := 2
 var max_players := 4
 var ice_servers = [{ "urls": ["stun:stun.l.google.com:19302"] }]
-var nakama_socket: NakamaSocket setget set_nakama_socket
 
 # Nakama variables:
+var nakama_socket: NakamaSocket setget _set_readonly_variable
 var my_session_id: String setget _set_readonly_variable, get_my_session_id
 var match_id: String setget _set_readonly_variable, get_match_id
 var matchmaker_ticket: String setget _set_readonly_variable, get_matchmaker_ticket
@@ -27,7 +27,7 @@ enum MatchState {
 	READY = 4,
 	PLAYING = 5,
 }
-var match_state : int = MatchState.LOBBY setget _set_readonly_variable, get_match_state
+var match_state: int = MatchState.LOBBY setget _set_readonly_variable, get_match_state
 
 enum MatchMode {
 	NONE = 0,
@@ -35,7 +35,7 @@ enum MatchMode {
 	JOIN = 2,
 	MATCHMAKER = 3,
 }
-var match_mode : int = MatchMode.NONE setget _set_readonly_variable, get_match_mode
+var match_mode: int = MatchMode.NONE setget _set_readonly_variable, get_match_mode
 
 enum PlayerStatus {
 	CONNECTING = 0,
@@ -97,10 +97,13 @@ static func unserialize_players(_players: Dictionary) -> Dictionary:
 		result[key] = Player.from_dict(_players[key])
 	return result
 
-func _set_readonly_variable(value) -> void:
+func _set_readonly_variable(_value) -> void:
 	pass
 
-func set_nakama_socket(_nakama_socket: NakamaSocket) -> void:
+func _set_nakama_socket(_nakama_socket: NakamaSocket) -> void:
+	if nakama_socket == _nakama_socket:
+		return
+	
 	if nakama_socket:
 		nakama_socket.disconnect("closed", self, "_on_nakama_closed")
 		nakama_socket.disconnect("received_error", self, "_on_nakama_error")
@@ -116,18 +119,9 @@ func set_nakama_socket(_nakama_socket: NakamaSocket) -> void:
 		nakama_socket.connect("received_match_presence", self, "_on_nakama_match_presence")
 		nakama_socket.connect("received_matchmaker_matched", self, "_on_nakama_matchmaker_matched")
 
-func _nakama_socket_required() -> bool:
-	if not nakama_socket:
-		push_error("NakamaWebRTC: Cannot perform operation without nakama_socket")
-		emit_signal("error", "No connection to server")
-		return true
-	return false
-
-func create_match():
-	if _nakama_socket_required():
-		return
-	
+func create_match(_nakama_socket: NakamaSocket) -> void:
 	leave()
+	_set_nakama_socket(_nakama_socket)
 	match_mode = MatchMode.CREATE
 
 	var data = yield(nakama_socket.create_match_async(), "completed")
@@ -137,11 +131,9 @@ func create_match():
 	else:
 		_on_nakama_match_created(data)
 
-func join_match(_match_id: String):
-	if _nakama_socket_required():
-		return
-	
+func join_match(_nakama_socket: NakamaSocket, _match_id: String) -> void:
 	leave()
+	_set_nakama_socket(_nakama_socket)
 	match_mode = MatchMode.JOIN
 	
 	var data = yield(nakama_socket.join_match_async(_match_id), "completed")
@@ -151,11 +143,9 @@ func join_match(_match_id: String):
 	else:
 		_on_nakama_match_join(data)
 
-func start_matchmaking(data: Dictionary = {}):
-	if _nakama_socket_required():
-		return
-	
+func start_matchmaking(_nakama_socket: NakamaSocket, data: Dictionary = {}) -> void:
 	leave()
+	_set_nakama_socket(_nakama_socket)
 	match_mode = MatchMode.MATCHMAKER
 	
 	if data.has('min_count'):
@@ -176,11 +166,11 @@ func start_matchmaking(data: Dictionary = {}):
 	else:
 		matchmaker_ticket = result.ticket
 
-func start_playing():
+func start_playing() -> void:
 	assert(match_state == MatchState.READY)
 	match_state = MatchState.PLAYING
 
-func leave(close_socket = false):
+func leave(close_socket: bool = false) -> void:
 	# WebRTC disconnect.
 	if _webrtc_multiplayer:
 		_webrtc_multiplayer.close()
@@ -194,13 +184,13 @@ func leave(close_socket = false):
 			yield(nakama_socket.remove_matchmaker_async(matchmaker_ticket), 'completed')
 		if close_socket:
 			nakama_socket.close()
-			self.nakama_socket = null
+			_set_nakama_socket(null)
 	
 	# Initialize all the variables to their default state.
 	my_session_id = ''
 	match_id = ''
 	matchmaker_ticket = ''
-	_create__webrtc_multiplayer()
+	_create_webrtc_multiplayer()
 	_webrtc_peers = {}
 	_webrtc_peers_connected = {}
 	players = {}
@@ -208,7 +198,7 @@ func leave(close_socket = false):
 	match_state = MatchState.LOBBY
 	match_mode = MatchMode.NONE
 
-func _create__webrtc_multiplayer():
+func _create_webrtc_multiplayer() -> void:
 	if _webrtc_multiplayer:
 		_webrtc_multiplayer.disconnect("peer_connected", self, "_on_webrtc_peer_connected")
 		_webrtc_multiplayer.disconnect("peer_disconnected", self, "_on_webrtc_peer_disconnected")
@@ -217,19 +207,19 @@ func _create__webrtc_multiplayer():
 	_webrtc_multiplayer.connect("peer_connected", self, "_on_webrtc_peer_connected")
 	_webrtc_multiplayer.connect("peer_disconnected", self, "_on_webrtc_peer_disconnected")
 
-func get_my_session_id():
+func get_my_session_id() -> String:
 	return my_session_id
 
-func get_match_id():
+func get_match_id() -> String:
 	return match_id
 
-func get_matchmaker_ticket():
+func get_matchmaker_ticket() -> String:
 	return matchmaker_ticket
 
-func get_match_mode():
+func get_match_mode() -> int:
 	return match_mode
 
-func get_match_state():
+func get_match_state() -> int:
 	return match_state
 
 func get_session_id(peer_id: int):
@@ -238,19 +228,19 @@ func get_session_id(peer_id: int):
 			return session_id
 	return null
 
-func get_player_names_by_peer_id():
+func get_player_names_by_peer_id() -> Dictionary:
 	var result = {}
 	for session_id in players:
 		result[players[session_id]['peer_id']] = players[session_id]['username']
 	return result
 
-func _on_nakama_error(data):
+func _on_nakama_error(data) -> void:
 	print ("ERROR:")
 	print(data)
 	leave()
 	emit_signal("error", "Websocket connection error")
 
-func _on_nakama_closed():
+func _on_nakama_closed() -> void:
 	leave()
 	emit_signal("disconnected")
 
@@ -268,7 +258,7 @@ func _on_nakama_match_created(data: NakamaRTAPI.Match) -> void:
 	emit_signal("player_joined", my_player)
 	emit_signal("player_status_changed", my_player, PlayerStatus.CONNECTED)
 
-func _on_nakama_match_presence(data: NakamaRTAPI.MatchPresenceEvent):
+func _on_nakama_match_presence(data: NakamaRTAPI.MatchPresenceEvent) -> void:
 	for u in data.joins:
 		if u.session_id == my_session_id:
 			continue
@@ -306,6 +296,8 @@ func _on_nakama_match_presence(data: NakamaRTAPI.MatchPresenceEvent):
 	for u in data.leaves:
 		if u.session_id == my_session_id:
 			continue
+		if not players.has(u.session_id):
+			continue
 		
 		var player = players[u.session_id]
 		_webrtc_disconnect_peer(player)
@@ -324,7 +316,7 @@ func _on_nakama_match_presence(data: NakamaRTAPI.MatchPresenceEvent):
 				if match_state == MatchState.READY || match_state == MatchState.PLAYING:
 					emit_signal("match_not_ready")
 
-func _on_nakama_match_join(data: NakamaRTAPI.Match):
+func _on_nakama_match_join(data: NakamaRTAPI.Match) -> void:
 	match_id = data.match_id
 	my_session_id = data.self_user.session_id
 	
@@ -336,7 +328,7 @@ func _on_nakama_match_join(data: NakamaRTAPI.Match):
 					continue
 			_webrtc_connect_peer(players[u.session_id])
 
-func _on_nakama_matchmaker_matched(data: NakamaRTAPI.MatchmakerMatched):
+func _on_nakama_matchmaker_matched(data: NakamaRTAPI.MatchmakerMatched) -> void:
 	if data.is_exception():
 		leave()
 		emit_signal("error", "Matchmaker error")
@@ -368,7 +360,7 @@ func _on_nakama_matchmaker_matched(data: NakamaRTAPI.MatchmakerMatched):
 	else:
 		_on_nakama_match_join(result)
 
-func _on_nakama_match_state(data: NakamaRTAPI.MatchData):
+func _on_nakama_match_state(data: NakamaRTAPI.MatchData) -> void:
 	var json_result = JSON.parse(data.data)
 	if json_result.error != OK:
 		return
@@ -405,7 +397,7 @@ func _on_nakama_match_state(data: NakamaRTAPI.MatchData):
 			leave()
 			emit_signal("error", content['reason'])
 
-func _webrtc_connect_peer(player: Player):
+func _webrtc_connect_peer(player: Player) -> void:
 	# Don't add the same peer twice!
 	if _webrtc_peers.has(player.session_id):
 		return
@@ -436,13 +428,13 @@ func _webrtc_connect_peer(player: Player):
 		if result != OK:
 			emit_signal("error", "Unable to create WebRTC offer")
 
-func _webrtc_disconnect_peer(player: Player):
+func _webrtc_disconnect_peer(player: Player) -> void:
 	var webrtc_peer = _webrtc_peers[player.session_id]
 	webrtc_peer.close()
 	_webrtc_peers.erase(player.session_id)
 	_webrtc_peers_connected.erase(player.session_id)
 
-func _webrtc_reconnect_peer(player: Player):
+func _webrtc_reconnect_peer(player: Player) -> void:
 	var old_webrtc_peer = _webrtc_peers[player.session_id]
 	if old_webrtc_peer:
 		old_webrtc_peer.close()
@@ -460,7 +452,7 @@ func _webrtc_reconnect_peer(player: Player):
 		match_state = MatchState.CONNECTING
 		emit_signal("match_not_ready")
 
-func _on_webrtc_peer_session_description_created(type : String, sdp : String, session_id : String):
+func _on_webrtc_peer_session_description_created(type: String, sdp: String, session_id: String) -> void:
 	var webrtc_peer = _webrtc_peers[session_id]
 	webrtc_peer.set_local_description(type, sdp)
 	
@@ -472,7 +464,7 @@ func _on_webrtc_peer_session_description_created(type : String, sdp : String, se
 		sdp = sdp,
 	}))
 
-func _on_webrtc_peer_ice_candidate_created(media : String, index : int, name : String, session_id : String):
+func _on_webrtc_peer_ice_candidate_created(media: String, index: int, name: String, session_id: String) -> void:
 	# Send this data to the peer so they can call .add_ice_candidate()
 	nakama_socket.send_match_state_async(match_id, MatchOpCode.WEBRTC_PEER_METHOD, JSON.print({
 		method = "add_ice_candidate",
@@ -482,7 +474,7 @@ func _on_webrtc_peer_ice_candidate_created(media : String, index : int, name : S
 		name = name,
 	}))
 
-func _on_webrtc_peer_connected(peer_id: int):
+func _on_webrtc_peer_connected(peer_id: int) -> void:
 	for session_id in players:
 		if players[session_id]['peer_id'] == peer_id:
 			_webrtc_peers_connected[session_id] = true
@@ -498,7 +490,7 @@ func _on_webrtc_peer_connected(peer_id: int):
 		else:
 			match_state = MatchState.WAITING_FOR_ENOUGH_PLAYERS
 
-func _on_webrtc_peer_disconnected(peer_id: int):
+func _on_webrtc_peer_disconnected(peer_id: int) -> void:
 	print ("WebRTC peer disconnected: " + str(peer_id))
 	
 	for session_id in players:
