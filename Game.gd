@@ -18,14 +18,21 @@ signal game_started ()
 signal player_dead (player_id)
 signal game_over (player_id)
 
+func _get_custom_rpc_methods() -> Array:
+	return [
+		'_do_game_setup',
+		'_finished_game_setup',
+		'_do_game_start',
+	]
+
 func game_start(players: Dictionary) -> void:
 	if GameState.online_play:
-		rpc("_do_game_setup", players)
+		OnlineMatch.custom_rpc_sync(self, '_do_game_setup', [players])
 	else:
 		_do_game_setup(players)
 
 # Initializes the game so that it is ready to really start.
-remotesync func _do_game_setup(players: Dictionary) -> void:
+func _do_game_setup(players: Dictionary) -> void:
 	get_tree().set_pause(true)
 	
 	if game_started:
@@ -56,24 +63,24 @@ remotesync func _do_game_setup(players: Dictionary) -> void:
 	camera.update_position_and_zoom(false)
 	
 	if GameState.online_play:
-		var my_id := get_tree().get_network_unique_id()
+		var my_id := OnlineMatch.get_network_unique_id()
 		var my_player := players_node.get_node(str(my_id))
 		my_player.player_controlled = true
 		
 		# Tell the host that we've finished setup.
-		rpc_id(1, "_finished_game_setup", my_id)
+		OnlineMatch.custom_rpc_id_sync(self, 1, "_finished_game_setup", [my_id])
 	else:
 		_do_game_start()
 
 # Records when each player has finished setup so we know when all players are ready.
-mastersync func _finished_game_setup(player_id: int) -> void:
+func _finished_game_setup(player_id: int) -> void:
 	players_setup[player_id] = players_alive[player_id]
 	if players_setup.size() == players_alive.size():
 		# Once all clients have finished setup, tell them to start the game.
-		rpc("_do_game_start")
+		OnlineMatch.custom_rpc_sync(self, "_do_game_start")
 
 # Actually start the game on this client.
-remotesync func _do_game_start() -> void:
+func _do_game_start() -> void:
 	if map.has_method('map_start'):
 		map.map_start()
 	emit_signal("game_started")

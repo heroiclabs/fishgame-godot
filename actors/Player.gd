@@ -72,6 +72,15 @@ func _ready():
 	sprite.frames = skin_resources[player_skin]
 	reset_state()
 
+func _get_custom_rpc_methods() -> Array:
+	return [
+		'_try_pickup',
+		'_do_pickup',
+		'_do_throw',
+		'_do_die',
+		'update_remote_player',
+	]
+
 func set_player_skin(_player_skin: int) -> void:
 	if player_skin != _player_skin and _player_skin < PlayerSkin.MAX and _player_skin >= 0:
 		player_skin = _player_skin
@@ -126,33 +135,33 @@ func pickup_or_throw() -> void:
 		if current_pickup:
 			# We throw on all clients; the pickup knows to simulate physics
 			# only on the master, and sync to the puppets.
-			rpc('_do_throw')
+			OnlineMatch.custom_rpc_sync(self, '_do_throw')
 		else:
 			# We try to pickup only on the host so it can make sure that
 			# only one client gets it, and then the host will tell everyone
 			# else.
-			rpc_id(1, '_try_pickup')
+			OnlineMatch.custom_rpc_id_sync(self, 1, '_try_pickup')
 
-remotesync func _try_pickup() -> void:
+func _try_pickup() -> void:
 	for body in pickup_area.get_overlapping_bodies():
 		if not body.can_pickup():
 			continue
 		body.pickup_state = Pickup.PickupState.PICKED_UP
 		
 		if GameState.online_play:
-			rpc('_do_pickup', body.get_path())
+			OnlineMatch.custom_rpc_sync(self, '_do_pickup', [body.get_path()])
 		else:
 			_do_pickup(body.get_path())
 		
 		return
 
-remotesync func _do_pickup(pickup_path: NodePath) -> void:
+func _do_pickup(pickup_path: NodePath) -> void:
 	sounds.play("Pickup")
 	current_pickup = get_node(pickup_path)
 	current_pickup.pickup(pickup_position.global_position)
 	current_pickup.flip_h = flip_h
 
-remotesync func _do_throw() -> void:
+func _do_throw() -> void:
 	sounds.play("Throw")
 	var throw_vector = (vector * throw_vector_mix) + ((Vector2.LEFT if flip_h else Vector2.RIGHT) * throw_velocity)
 	throw_vector += Vector2.UP * throw_upward_velocity
@@ -182,14 +191,14 @@ func hurt(node: Node2D) -> void:
 func die() -> void:
 	if GameState.online_play:
 		if current_pickup:
-			rpc("_do_throw")
-		rpc("_do_die")
+			OnlineMatch.custom_rpc_sync(self, "_do_throw")
+		OnlineMatch.custom_rpc_sync(self, "_do_die")
 	else:
 		if current_pickup:
 			_do_throw()
 		_do_die();
 
-remotesync func _do_die() -> void:
+func _do_die() -> void:
 	# @todo Move this to the Dead.gd state, if we can sync the state machine.
 	var explosion = ExplodeEffect.instance()
 	get_parent().add_child(explosion)
@@ -223,7 +232,7 @@ func _physics_process(delta: float) -> void:
 			if sync_forced or input_buffer_changed or sync_counter >= SYNC_DELAY:
 				sync_counter = 0
 				sync_forced = false
-				rpc("update_remote_player", input_buffer.buffer, state_machine.current_state.name, sync_state_info, global_position, vector, sprite.animation, sprite.frame, flip_h)
+				OnlineMatch.custom_rpc(self, "update_remote_player", [input_buffer.buffer, state_machine.current_state.name, sync_state_info, global_position, vector, sprite.animation, sprite.frame, flip_h])
 				if sync_state_info.size() > 0:
 					sync_state_info.clear()
 		else:
@@ -233,7 +242,7 @@ func update_pickup_positions() -> void:
 	if current_pickup:
 		current_pickup.global_position = pickup_position.global_position
 
-puppet func update_remote_player(_input_buffer: Dictionary, current_state: String, state_info: Dictionary, _position: Vector2, _vector: Vector2, animation: String, frame: int, flip_h: bool) -> void:
+func update_remote_player(_input_buffer: Dictionary, current_state: String, state_info: Dictionary, _position: Vector2, _vector: Vector2, animation: String, frame: int, flip_h: bool) -> void:
 	# Initialize the input buffer.
 	if input_buffer == null:
 		input_buffer = InputBuffer.new(PlayerActions, input_prefix)

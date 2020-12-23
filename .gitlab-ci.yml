@@ -19,15 +19,6 @@ windows:
   <<: *export_before_script
   stage: export
   script:
-    # Pull in the WebRTC GDNative plugin
-    - wget https://github.com/godotengine/webrtc-native/releases/download/0.3/webrtc_native_0.3_multi-release.zip
-    - unzip -a webrtc_native_0.3_multi-release.zip
-    - rm webrtc_native_0.3_multi-release.zip
-
-    # Delete the debug version of the plugin.
-    - rm webrtc_debug/webrtc_debug.gdnlib
-
-    # Export!
     - mkdir -v -p build/windows
     - godot -v --export "Windows Desktop" ./build/windows/$EXPORT_NAME.exe
   artifacts:
@@ -39,15 +30,6 @@ linux:
   <<: *export_before_script
   stage: export
   script:
-    # Pull in the WebRTC GDNative plugin
-    - wget https://github.com/godotengine/webrtc-native/releases/download/0.3/webrtc_native_0.3_multi-release.zip
-    - unzip -a webrtc_native_0.3_multi-release.zip
-    - rm webrtc_native_0.3_multi-release.zip
-
-    # Delete the debug version of the plugin.
-    - rm webrtc_debug/webrtc_debug.gdnlib
-
-    # Export!
     - mkdir -v -p build/linux
     - godot -v --export "Linux/X11" ./build/linux/$EXPORT_NAME.x86_64
   artifacts:
@@ -59,16 +41,6 @@ macosx:
   <<: *export_before_script
   stage: export
   script:
-    # Pull in the WebRTC GDNative plugin
-    - wget https://github.com/godotengine/webrtc-native/files/3796078/webrtc_0.3_mac_only-with-debug.zip
-    - unzip -a webrtc_0.3_mac_only-with-debug.zip
-    - cp -r webrtc_mac/webrtc/lib webrtc/
-    - rm -rf webrtc_0.3_mac_only-with-debug.zip __MACOSX webrtc_mac
-
-    # Delete the debug version of the plugin.
-    - rm webrtc_debug/webrtc_debug.gdnlib
-
-    # Export!
     - mkdir -v -p build/macosx
     - godot -v --export "Mac OSX" ./build/macosx/$EXPORT_NAME.zip
 
@@ -83,9 +55,6 @@ web:
   <<: *export_before_script
   stage: export
   script:
-    # Delete the WebRTC GDNative plugins.
-    - rm -rf webrtc_debug webrtc
-
     - mkdir -v -p build/web
     - godot -v --export "HTML5" ./build/web/index.html
   artifacts:

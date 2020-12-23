@@ -25,6 +25,11 @@ signal picked_up()
 func _ready():
 	pass
 
+func _get_custom_rpc_methods() -> Array:
+	return [
+		'update_remote_pickup',
+	]
+
 func set_flip_h(_flip_h: bool) -> void:
 	flip_h = _flip_h
 	
@@ -53,7 +58,7 @@ func _on_throw_finished() -> void:
 
 func throw(_throw_position: Vector2, _throw_vector: Vector2, _throw_torque: float) -> void:
 	_on_throw()
-	if not GameState.online_play or is_network_master():
+	if not GameState.online_play or OnlineMatch.is_network_master_for_node(self):
 		mode = RigidBody2D.MODE_RIGID
 		pickup_state = PickupState.THROWING
 		throw_position = _throw_position
@@ -79,8 +84,8 @@ func _integrate_forces(state: Physics2DDirectBodyState) -> void:
 				_on_throw_finished()
 				pickup_state = PickupState.FREE
 	
-	if GameState.online_play and is_network_master() and not sleeping and (pickup_state == PickupState.FREE or pickup_state == PickupState.THROWN):
-		rpc('update_remote_pickup', global_transform)
+	if GameState.online_play and OnlineMatch.is_network_master_for_node(self) and not sleeping and (pickup_state == PickupState.FREE or pickup_state == PickupState.THROWN):
+		OnlineMatch.custom_rpc(self, 'update_remote_pickup', [global_transform])
 
-puppet func update_remote_pickup(_remote_transform) -> void:
+func update_remote_pickup(_remote_transform) -> void:
 	global_transform = _remote_transform

@@ -31,6 +31,12 @@ func _ready() -> void:
 	randomize()
 	music.play_random()
 
+func _get_custom_rpc_methods() -> Array:
+	return [
+		'player_ready',
+		'show_winner'
+	]
+
 #####
 # UI callbacks
 #####
@@ -86,7 +92,7 @@ func _on_HUD_back_button() -> void:
 		UI.show_screen("MatchScreen")
 
 func _on_ReadyScreen_ready_pressed() -> void:
-	rpc("player_ready", OnlineMatch.get_my_session_id())
+	OnlineMatch.custom_rpc_sync(self, "player_ready", [OnlineMatch.get_my_session_id()])
 
 #####
 # OnlineMatch callbacks
@@ -124,19 +130,19 @@ func _on_OnlineMatch_player_left(player) -> void:
 
 func _on_OnlineMatch_player_status_changed(player, status) -> void:
 	if status == OnlineMatch.PlayerStatus.CONNECTED:
-		if get_tree().is_network_server():
+		if OnlineMatch.is_network_server():
 			# Tell this new player about all the other players that are already ready.
 			for session_id in players_ready:
-				rpc_id(player.peer_id, "player_ready", session_id)
+				OnlineMatch.custom_rpc_id(self, player.peer_id, "player_ready", [session_id])
 
 #####
 # Gameplay methods and callbacks
 #####
 
-remotesync func player_ready(session_id: String) -> void:
+func player_ready(session_id: String) -> void:
 	ready_screen.set_status(session_id, "READY!")
 	
-	if get_tree().is_network_server() and not players_ready.has(session_id):
+	if OnlineMatch.is_network_server() and not players_ready.has(session_id):
 		players_ready[session_id] = true
 		if players_ready.size() == OnlineMatch.players.size():
 			if OnlineMatch.match_state != OnlineMatch.MatchState.PLAYING:
@@ -178,7 +184,7 @@ func _on_Game_game_started() -> void:
 
 func _on_Game_player_dead(player_id: int) -> void:
 	if GameState.online_play:
-		var my_id = get_tree().get_network_unique_id()
+		var my_id = OnlineMatch.get_network_unique_id()
 		if player_id == my_id:
 			UI.show_message("You lose!")
 
@@ -187,7 +193,7 @@ func _on_Game_game_over(player_id: int) -> void:
 	
 	if not GameState.online_play:
 		show_winner(players[player_id])
-	elif get_tree().is_network_server():
+	elif OnlineMatch.is_network_server():
 		if not players_score.has(player_id):
 			players_score[player_id] = 1
 		else:
@@ -195,9 +201,9 @@ func _on_Game_game_over(player_id: int) -> void:
 		
 		var player_session_id = OnlineMatch.get_session_id(player_id)
 		var is_match: bool = players_score[player_id] >= 5
-		rpc("show_winner", players[player_id], player_session_id, players_score[player_id], is_match)
+		OnlineMatch.custom_rpc_sync(self, "show_winner", [players[player_id], player_session_id, players_score[player_id], is_match])
 
-remotesync func show_winner(name: String, session_id: String = '', score: int = 0, is_match: bool = false) -> void:
+func show_winner(name: String, session_id: String = '', score: int = 0, is_match: bool = false) -> void:
 	if is_match:
 		UI.show_message(name + " WINS THE WHOLE MATCH!")
 	else:

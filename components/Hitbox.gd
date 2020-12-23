@@ -17,5 +17,5 @@ func _update_disabled() -> void:
 
 func _on_body_entered(body: Node) -> void:
 	if not disabled and body.has_method('hurt'):
-		if not GameState.online_play or body.is_network_master():
+		if not GameState.online_play or OnlineMatch.is_network_master_for_node(body):
 			body.hurt(self)

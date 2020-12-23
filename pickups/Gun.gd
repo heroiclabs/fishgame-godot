@@ -20,6 +20,12 @@ onready var ammo := max_ammo
 func _ready() -> void:
 	cooldown_timer.wait_time = cooldown_time
 
+func _get_custom_rpc_methods() -> Array:
+	return ._get_custom_rpc_methods() + [
+		'_do_use',
+		'_disintegrate',
+	]
+
 func use() -> void:
 	if not allow_shoot:
 		return
@@ -33,9 +39,9 @@ func use() -> void:
 	if not GameState.online_play:
 		_do_use(projectile_name, projectile_position.global_position, projectile_vector, projectile_range)
 	else:
-		rpc("_do_use", projectile_name, projectile_position.global_position, projectile_vector, projectile_range)
+		OnlineMatch.custom_rpc_sync(self, "_do_use", [projectile_name, projectile_position.global_position, projectile_vector, projectile_range])
 
-remotesync func _do_use(_projectile_name: String, _projectile_position: Vector2, _projectile_vector: Vector2, _projectile_range: float) -> void:
+func _do_use(_projectile_name: String, _projectile_position: Vector2, _projectile_vector: Vector2, _projectile_range: float) -> void:
 	var projectile_parent = get_node(projectile_parent_path)
 	
 	if ammo <= 0:
@@ -60,9 +66,9 @@ func _on_throw_finished() -> void:
 		if not GameState.online_play:
 			_disintegrate()
 		else:
-			rpc('_disintegrate')
+			OnlineMatch.custom_rpc_sync(self, '_disintegrate')
 
-remotesync func _disintegrate() -> void:
+func _disintegrate() -> void:
 	var parent = get_parent();
 	if parent:
 		var effect = DisintegrateEffect.instance()

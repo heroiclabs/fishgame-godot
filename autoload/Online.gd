@@ -20,6 +20,10 @@ signal socket_connected (nakama_socket)
 func _set_readonly_variable(_value) -> void:
 	pass
 
+func _ready() -> void:
+	# Don't stop processing messages from Nakama when the game is paused.
+	Nakama.pause_mode = Node.PAUSE_MODE_PROCESS
+
 func get_nakama_client() -> NakamaClient:
 	if nakama_client == null:
 		nakama_client = Nakama.create_client(

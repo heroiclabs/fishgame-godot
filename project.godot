@@ -113,7 +113,7 @@ config/icon="res://icon.png"
 Build="*res://autoload/Build.gd"
 Nakama="*res://addons/com.heroiclabs.nakama/Nakama.gd"
 Online="*res://autoload/Online.gd"
-OnlineMatch="*res://addons/nakama-webrtc/NakamaWebRTC.gd"
+OnlineMatch="*res://autoload/OnlineMatch.gd"
 GameState="*res://autoload/GameState.gd"
 UI="*res://autoload/UI.gd"
 Util="*res://autoload/Util.gd"
@@ -129,7 +129,7 @@ enabled=PoolStringArray( "snopek-state-machine" )
 
 [gdnative]
 
-singletons=[ "res://webrtc/webrtc.gdnlib", "res://webrtc_debug/webrtc_debug.gdnlib" ]
+singletons=[  ]
 
 [importer_defaults]
 

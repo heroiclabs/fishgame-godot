@@ -14,14 +14,19 @@ func _ready() -> void:
 	animation_player.play("Glow")
 	timer.connect("timeout", self, "_do_generate")
 
+func _get_custom_rpc_methods() -> Array:
+	return [
+		'generate',
+	]
+
 func _do_generate() -> void:
 	var pickup_name = Util.find_unique_name(get_node(pickup_parent_path), 'Pickup-')
 	if GameState.online_play:
-		rpc("generate", pickup_name)
+		OnlineMatch.custom_rpc_sync(self, "generate", [pickup_name])
 	else:
 		generate(pickup_name)
 
-remotesync func generate(pickup_name: String) -> void:
+func generate(pickup_name: String) -> void:
 	if not pickup_scene:
 		return
 	
@@ -38,11 +43,11 @@ func _on_current_pickup_picked_up() -> void:
 	current_pickup.disconnect("picked_up", self, "_on_current_pickup_picked_up")
 	current_pickup = null
 	
-	if not GameState.online_play or is_network_master():
+	if not GameState.online_play or OnlineMatch.is_network_master_for_node(self):
 		timer.start()
 
 func map_object_start() -> void:
-	if current_pickup == null and (not GameState.online_play or is_network_master()):
+	if current_pickup == null and (not GameState.online_play or OnlineMatch.is_network_master_for_node(self)):
 		_do_generate()
 	timer.wait_time = regenerate_delay
 
