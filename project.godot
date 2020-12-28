@@ -79,7 +79,7 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://addons/com.heroiclabs.nakama/api/NakamaWriteStorageObject.gd"
 }, {
-"base": "RigidBody2D",
+"base": "KinematicBody2D",
 "class": "Pickup",
 "language": "GDScript",
 "path": "res://pickups/Pickup.gd"

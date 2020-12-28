@@ -28,11 +28,11 @@ export (float) var sliding_friction := 1000.0
 export (float) var jump_speed := 1350.0
 export (float) var terminal_velocity := 2000.0
 export (float) var push_back_speed := 50.0
-export (float) var throw_velocity := 400.0
-export (float) var throw_upward_velocity := 800.0
+export (float) var throw_velocity := 600.0
+export (float) var throw_upward_velocity := 1000.0
 export (float) var throw_vector_mix := 0.5
-export (float) var throw_vector_max_length := 700.0
-export (float) var throw_torque := 1500.0
+export (float) var throw_vector_max_length := 1400.0
+export (float) var throw_torque := 10.0
 export (bool) var invincible := false
 export (bool) var player_controlled := false
 export (String) var input_prefix := "player1_"
@@ -54,7 +54,7 @@ onready var gravity: float = float(ProjectSettings.get_setting("physics/2d/defau
 var flip_h := false setget set_flip_h
 
 var vector := Vector2.ZERO
-var current_pickup: RigidBody2D
+var current_pickup: KinematicBody2D
 
 const PlayerActions := ['left', 'right', 'down', 'jump', 'grab', 'use']
 var input_buffer

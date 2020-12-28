@@ -2,7 +2,6 @@
 
 [ext_resource path="res://pickups/Pickup.gd" type="Script" id=1]
 
-[node name="Pickup" type="RigidBody2D"]
+[node name="Pickup" type="KinematicBody2D"]
 collision_layer = 8
-sleeping = true
 script = ExtResource( 1 )

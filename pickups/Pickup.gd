@@ -1,7 +1,10 @@
-extends RigidBody2D
+extends KinematicBody2D
 class_name Pickup
 
 onready var initial_scale = scale
+onready var gravity: float = float(ProjectSettings.get_setting("physics/2d/default_gravity"))
+onready var linear_damp: float = float(ProjectSettings.get_setting("physics/2d/default_linear_damp"))
+onready var angular_damp: float = float(ProjectSettings.get_setting("physics/2d/default_angular_damp"))
 
 var flip_h := false setget set_flip_h
 
@@ -14,11 +17,20 @@ enum PickupState {
 }
 
 # Minimum thresholds in order to sleep physics on this body.
-const MIN_LINEAR_VELOCITY = 10.0
-const MIN_ANGULAR_VELOCITY = 1.0
+const MIN_LINEAR_VELOCITY := 10.0
+const MIN_ANGULAR_VELOCITY := 10.0
 
 var pickup_state: int = PickupState.FREE
 var throw_position := Vector2.ZERO
+
+var sleeping := false
+var linear_velocity := Vector2.ZERO
+var angular_velocity := 0.0
+var bounce := 0.1
+
+const SYNC_DELAY := 3
+var sync_forced := false
+var sync_counter: int = 0
 
 signal picked_up()
 
@@ -42,8 +54,8 @@ func can_pickup() -> bool:
 	return pickup_state == PickupState.FREE or pickup_state == PickupState.THROWN
 
 func pickup(_pickup_position: Vector2) -> void:
-	mode = RigidBody2D.MODE_KINEMATIC
 	pickup_state = PickupState.PICKED_UP
+	sleeping = true
 	global_position = _pickup_position
 	global_rotation = 0.0
 	emit_signal("picked_up")
@@ -58,34 +70,71 @@ func _on_throw_finished() -> void:
 
 func throw(_throw_position: Vector2, _throw_vector: Vector2, _throw_torque: float) -> void:
 	_on_throw()
-	if not GameState.online_play or OnlineMatch.is_network_master_for_node(self):
-		mode = RigidBody2D.MODE_RIGID
-		pickup_state = PickupState.THROWING
-		throw_position = _throw_position
-		apply_central_impulse(_throw_vector)
-		apply_torque_impulse(_throw_torque)
-	else:
-		mode = RigidBody2D.MODE_KINEMATIC
-		pickup_state = PickupState.FREE
+
+	pickup_state = PickupState.THROWING
+	
+	throw_position = _throw_position
+	linear_velocity = _throw_vector
+	angular_velocity = _throw_torque
+	
+	sleeping = false
+	sync_forced = true
 
 func use() -> void:
 	# Implement this in child classes.
 	pass
 
-func _integrate_forces(state: Physics2DDirectBodyState) -> void:
+func _physics_process(delta: float) -> void:
+	if sleeping:
+		return
+	if pickup_state == PickupState.PICKED_UP or pickup_state == PickupState.WORN:
+		return
+	
 	if pickup_state == PickupState.THROWING:
 		global_transform = Transform2D(0.0, throw_position)
-		state.transform = global_transform
 		pickup_state = PickupState.THROWN
-	else:
-		if linear_velocity.length() < MIN_LINEAR_VELOCITY and angular_velocity < MIN_ANGULAR_VELOCITY:
-			sleeping = true
-			if pickup_state == PickupState.THROWN:
-				_on_throw_finished()
-				pickup_state = PickupState.FREE
 	
-	if GameState.online_play and OnlineMatch.is_network_master_for_node(self) and not sleeping and (pickup_state == PickupState.FREE or pickup_state == PickupState.THROWN):
-		OnlineMatch.custom_rpc(self, 'update_remote_pickup', [global_transform])
+	# Apply gravity.
+	linear_velocity += (Vector2.DOWN * gravity * delta)
+	
+	# Apply linear damp.
+	var ld := 1.0 - (linear_damp * delta)
+	if ld < 0:
+		ld = 0.0
+	linear_velocity *= ld
+	
+	# Apply angular damp.
+	var ad := 1.0 - (angular_damp * delta)
+	if ad < 0:
+		ad = 0.0
+	angular_velocity *= ad
+	
+	# Rotate/move object and detect collisions.
+	global_rotation += (angular_velocity * delta)
+	var collision: KinematicCollision2D = move_and_collide(linear_velocity * delta)
+	
+	# Bounce the object if it collides.
+	if collision:
+		#linear_velocity = collision.normal * collision.remainder.length()
+		linear_velocity = collision.normal * (linear_velocity.length() * bounce)
+		move_and_collide(collision.normal * collision.remainder.length())
+	
+	# Sleep the object if it gets below certain linear/angular velocity thresholds.
+	if linear_velocity.length() < MIN_LINEAR_VELOCITY and angular_velocity < MIN_ANGULAR_VELOCITY:
+		sleeping = true
+		if pickup_state == PickupState.THROWN:
+			_on_throw_finished()
+			pickup_state = PickupState.FREE
+	
+	if GameState.online_play and OnlineMatch.is_network_master_for_node(self):
+		# Sync every so many physics frames.
+		sync_counter += 1
+		if sync_forced or sync_counter >= SYNC_DELAY:
+			sync_counter = 0
+			sync_forced = false
+			OnlineMatch.custom_rpc(self, 'update_remote_pickup', [global_transform, linear_velocity, angular_velocity])
 
-func update_remote_pickup(_remote_transform) -> void:
+func update_remote_pickup(_remote_transform, _linear_velocity, _angular_velocity) -> void:
 	global_transform = _remote_transform
+	linear_velocity = _linear_velocity
+	angular_velocity = _angular_velocity
