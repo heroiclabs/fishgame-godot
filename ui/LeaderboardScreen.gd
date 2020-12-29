@@ -13,6 +13,8 @@ func clear_records() -> void:
 		child.queue_free()
 
 func initialize() -> void:
+	UI.hide_message()
+	
 	var result: NakamaAPI.ApiLeaderboardRecordList = yield(Online.nakama_client.list_leaderboard_records_async(Online.nakama_session, 'fish_game_wins'), "completed")
 	if result.is_exception():
 		UI.show_message("Unable to retrieve leaderboard")
