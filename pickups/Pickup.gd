@@ -28,10 +28,6 @@ var linear_velocity := Vector2.ZERO
 var angular_velocity := 0.0
 var bounce := 0.1
 
-const SYNC_DELAY := 3
-var sync_forced := false
-var sync_counter: int = 0
-
 signal picked_up()
 
 func _ready():
@@ -39,7 +35,7 @@ func _ready():
 
 func _get_custom_rpc_methods() -> Array:
 	return [
-		'update_remote_pickup',
+		'_do_physics_finished',
 	]
 
 func set_flip_h(_flip_h: bool) -> void:
@@ -78,7 +74,6 @@ func throw(_throw_position: Vector2, _throw_vector: Vector2, _throw_torque: floa
 	angular_velocity = _throw_torque
 	
 	sleeping = false
-	sync_forced = true
 
 func use() -> void:
 	# Implement this in child classes.
@@ -120,21 +115,18 @@ func _physics_process(delta: float) -> void:
 		move_and_collide(collision.normal * collision.remainder.length())
 	
 	# Sleep the object if it gets below certain linear/angular velocity thresholds.
-	if linear_velocity.length() < MIN_LINEAR_VELOCITY and angular_velocity < MIN_ANGULAR_VELOCITY:
-		sleeping = true
-		if pickup_state == PickupState.THROWN:
-			_on_throw_finished()
-			pickup_state = PickupState.FREE
-	
-	if GameState.online_play and OnlineMatch.is_network_master_for_node(self):
-		# Sync every so many physics frames.
-		sync_counter += 1
-		if sync_forced or sync_counter >= SYNC_DELAY:
-			sync_counter = 0
-			sync_forced = false
-			OnlineMatch.custom_rpc(self, 'update_remote_pickup', [global_transform, linear_velocity, angular_velocity])
+	if not GameState.online_play or OnlineMatch.is_network_master_for_node(self):
+		if linear_velocity.length() < MIN_LINEAR_VELOCITY and angular_velocity < MIN_ANGULAR_VELOCITY:
+			if GameState.online_play:
+				OnlineMatch.custom_rpc_sync(self, '_do_physics_finished', [global_transform])
+			else:
+				_do_physics_finished(global_transform)
 
-func update_remote_pickup(_remote_transform, _linear_velocity, _angular_velocity) -> void:
-	global_transform = _remote_transform
-	linear_velocity = _linear_velocity
-	angular_velocity = _angular_velocity
+func _do_physics_finished(_remote_transform = null) -> void:
+	if _remote_transform:
+		global_transform = _remote_transform
+	
+	sleeping = true
+	if pickup_state == PickupState.THROWN:
+		_on_throw_finished()
+		pickup_state = PickupState.FREE
