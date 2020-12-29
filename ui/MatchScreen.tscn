@@ -22,20 +22,20 @@ anchor_bottom = 1.0
 margin_left = 50.0
 margin_top = 50.0
 margin_right = -50.0
-margin_bottom = -50.0
+margin_bottom = -100.0
 
 [node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer"]
 margin_left = 7.0
 margin_top = 7.0
 margin_right = 917.0
-margin_bottom = 493.0
+margin_bottom = 443.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 custom_constants/separation = 10
 
 [node name="MatchPanel" type="Panel" parent="PanelContainer/VBoxContainer"]
 margin_right = 910.0
-margin_bottom = 155.0
+margin_bottom = 138.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
@@ -78,9 +78,9 @@ __meta__ = {
 }
 
 [node name="CreatePanel" type="Panel" parent="PanelContainer/VBoxContainer"]
-margin_top = 165.0
+margin_top = 148.0
 margin_right = 910.0
-margin_bottom = 320.0
+margin_bottom = 287.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
@@ -109,9 +109,9 @@ __meta__ = {
 }
 
 [node name="JoinPanel" type="Panel" parent="PanelContainer/VBoxContainer"]
-margin_top = 330.0
+margin_top = 297.0
 margin_right = 910.0
-margin_bottom = 486.0
+margin_bottom = 436.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
@@ -157,4 +157,14 @@ text = "Join"
 __meta__ = {
 "_edit_use_anchors_": false
 }
+
+[node name="LeaderboardButton" type="Button" parent="."]
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = -380.0
+margin_top = -54.0
+text = "Leaderboard"
 [connection signal="pressed" from="PanelContainer/VBoxContainer/JoinPanel/PasteButton" to="." method="_on_PasteButton_pressed"]
+[connection signal="pressed" from="LeaderboardButton" to="." method="_on_LeaderboardButton_pressed"]

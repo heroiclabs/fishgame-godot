@@ -1,0 +1,46 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://assets/theme.tres" type="Theme" id=1]
+[ext_resource path="res://ui/LeaderboardRecord.gd" type="Script" id=2]
+
+[node name="LeaderboardRecord" type="Control"]
+anchor_right = 1.0
+size_flags_horizontal = 3
+theme = ExtResource( 1 )
+script = ExtResource( 2 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+size_flags_horizontal = 3
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Spacer1" type="Control" parent="HBoxContainer"]
+margin_right = 10.0
+margin_bottom = 48.0
+rect_min_size = Vector2( 10, 0 )
+
+[node name="UsernameLabel" type="Label" parent="HBoxContainer"]
+margin_left = 14.0
+margin_right = 906.0
+margin_bottom = 48.0
+size_flags_horizontal = 3
+text = "Username"
+
+[node name="WinsLabel" type="Label" parent="HBoxContainer"]
+margin_left = 910.0
+margin_right = 1010.0
+margin_bottom = 48.0
+rect_min_size = Vector2( 100, 0 )
+text = "10"
+
+[node name="Spacer2" type="Control" parent="HBoxContainer"]
+margin_left = 1014.0
+margin_right = 1024.0
+margin_bottom = 48.0
+rect_min_size = Vector2( 10, 0 )

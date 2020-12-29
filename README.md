@@ -22,3 +22,26 @@ To run the game:
 3. Edit the [autoload/Build.gd](https://github.com/heroiclabs/fishgame-godot/blob/main/autoload/Build.gd) file and replace the constants with the right values for your Nakama server. If you're running a Nakama server locally with the default settings, then you shouldn't need to change anything.
 4. Press F5 or click the play button in the upper-right corner to start the game
 
+## Setting up the leaderboard ##
+
+If you're connecting to your own Nakama server, the "Leaderboard" won't work
+until you first create it on your server.
+
+To do that:
+
+1. Create a file called `fish_game.lua` with the following contents:
+
+    ```lua
+    local nk = require("nakama")
+    
+    nk.run_once(function(context)
+    	nk.leaderboard_create("fish_game_wins", false, "desc", "incr")
+    end)
+    ```
+2. Place it in the `modules/` directory where your Nakama server keeps its
+data. If you're using the [docker-compose configuration from the Nakama
+documentation](https://heroiclabs.com/docs/install-docker-quickstart/#running-nakama-with-docker-compose)
+this will be under the same directory with the `docker-compose.yml` file.
+
+3. Then restart your Nakama server.
+

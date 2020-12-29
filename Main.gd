@@ -58,7 +58,7 @@ func _on_TitleScreen_play_online() -> void:
 	UI.show_screen("MatchScreen")
 
 func _on_UILayer_change_screen(name: String, _screen) -> void:
-	if name == 'MatchScreen':
+	if name == 'MatchScreen' or name == 'LeaderboardScreen':
 		if not Online.nakama_session or Online.nakama_session.is_expired():
 			# If we were previously connected, then show a message.
 			if Online.nakama_session:
@@ -202,6 +202,13 @@ func _on_Game_game_over(player_id: int) -> void:
 		var player_session_id = OnlineMatch.get_session_id(player_id)
 		var is_match: bool = players_score[player_id] >= 5
 		OnlineMatch.custom_rpc_sync(self, "show_winner", [players[player_id], player_session_id, players_score[player_id], is_match])
+		
+func update_wins_leaderboard() -> void:
+	if not Online.nakama_session or Online.nakama_session.is_expired():
+		# If our session has expired, then wait until a new session is setup.
+		yield(Online, "session_changed")
+	
+	Online.nakama_client.write_leaderboard_record_async(Online.nakama_session, 'fish_game_wins', 1)
 
 func show_winner(name: String, session_id: String = '', score: int = 0, is_match: bool = false) -> void:
 	if is_match:
@@ -216,6 +223,8 @@ func show_winner(name: String, session_id: String = '', score: int = 0, is_match
 	if GameState.online_play:
 		if is_match:
 			stop_game()
+			if session_id == OnlineMatch.my_session_id:
+				update_wins_leaderboard()
 			UI.show_screen("MatchScreen")
 		else:
 			ready_screen.hide_match_id()

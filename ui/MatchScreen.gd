@@ -63,3 +63,6 @@ func _join_match() -> void:
 
 func _on_PasteButton_pressed() -> void:
 	join_match_id_control.text = OS.clipboard
+
+func _on_LeaderboardButton_pressed() -> void:
+	UI.show_screen("LeaderboardScreen")
