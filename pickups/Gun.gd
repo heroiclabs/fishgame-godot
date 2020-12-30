@@ -34,8 +34,7 @@ func use() -> void:
 	cooldown_timer.start()
 	
 	var projectile_name = Util.find_unique_name(get_node(projectile_parent_path), 'Projectile-')
-	var projectile_vector: Vector2 = (Vector2.LEFT if flip_h else Vector2.RIGHT) * projectile_velocity
-	projectile_vector = projectile_vector.rotated(rotation)
+	var projectile_vector: Vector2 = (Vector2.RIGHT * projectile_velocity).rotated(rotation)
 	
 	if not GameState.online_play:
 		_do_use(projectile_name, projectile_position.global_position, projectile_vector, projectile_range)
