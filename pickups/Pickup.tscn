@@ -4,4 +4,5 @@
 
 [node name="Pickup" type="KinematicBody2D"]
 collision_layer = 8
+collision_mask = 17
 script = ExtResource( 1 )

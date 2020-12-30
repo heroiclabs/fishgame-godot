@@ -56,6 +56,9 @@ onready var gravity: float = float(ProjectSettings.get_setting("physics/2d/defau
 
 var flip_h := false setget set_flip_h
 
+const ONE_WAY_PLATFORMS_COLLISION_BIT := 4
+var pass_through_one_way_platforms := false setget set_pass_through_one_way_platforms
+
 var vector := Vector2.ZERO
 var current_pickup: KinematicBody2D
 
@@ -105,6 +108,14 @@ func set_flip_h(_flip_h: bool) -> void:
 		
 		if current_pickup:
 			current_pickup.flip_h = flip_h
+
+func set_pass_through_one_way_platforms(_pass_through: bool) -> void:
+	if pass_through_one_way_platforms != _pass_through:
+		pass_through_one_way_platforms = _pass_through
+		set_collision_mask_bit(ONE_WAY_PLATFORMS_COLLISION_BIT, !_pass_through)
+
+func _on_PassThroughDetectorArea_body_exited(body: Node) -> void:
+	self.pass_through_one_way_platforms = false
 
 func _on_Sprite_frame_changed() -> void:
 	var texture: Texture = sprite.frames.get_frame(sprite.animation, sprite.frame)
@@ -235,7 +246,7 @@ func _physics_process(delta: float) -> void:
 			if sync_forced or input_buffer_changed or sync_counter >= SYNC_DELAY:
 				sync_counter = 0
 				sync_forced = false
-				OnlineMatch.custom_rpc(self, "update_remote_player", [input_buffer.buffer, state_machine.current_state.name, sync_state_info, global_position, vector, sprite.animation, sprite.frame, flip_h])
+				OnlineMatch.custom_rpc(self, "update_remote_player", [input_buffer.buffer, state_machine.current_state.name, sync_state_info, global_position, vector, sprite.animation, sprite.frame, flip_h, pass_through_one_way_platforms])
 				if sync_state_info.size() > 0:
 					sync_state_info.clear()
 		else:
@@ -245,7 +256,7 @@ func update_pickup_positions() -> void:
 	if current_pickup:
 		current_pickup.global_transform = pickup_position.global_transform
 
-func update_remote_player(_input_buffer: Dictionary, current_state: String, state_info: Dictionary, _position: Vector2, _vector: Vector2, animation: String, frame: int, flip_h: bool) -> void:
+func update_remote_player(_input_buffer: Dictionary, current_state: String, state_info: Dictionary, _position: Vector2, _vector: Vector2, animation: String, frame: int, _flip_h: bool, _pass_through: bool) -> void:
 	# Initialize the input buffer.
 	if input_buffer == null:
 		input_buffer = InputBuffer.new(PlayerActions, input_prefix)
@@ -257,9 +268,11 @@ func update_remote_player(_input_buffer: Dictionary, current_state: String, stat
 	sprite.animation = animation
 	sprite.frame = frame
 	_on_Sprite_frame_changed()
-	set_flip_h(flip_h)
+	set_flip_h(_flip_h)
+	set_pass_through_one_way_platforms(_pass_through)
 	update_pickup_positions()
 
 func _on_StateMachine_state_changed(state, info: Dictionary) -> void:
 	sync_forced = true
 	sync_state_info = info
+

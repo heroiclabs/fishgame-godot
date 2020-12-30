@@ -1,4 +1,4 @@
-[gd_scene load_steps=27 format=2]
+[gd_scene load_steps=28 format=2]
 
 [ext_resource path="res://actors/player_blue_frames.tres" type="SpriteFrames" id=1]
 [ext_resource path="res://actors/player-states/Hurt.gd" type="Script" id=2]
@@ -35,6 +35,9 @@ extents = Vector2( 21, 21 )
 [sub_resource type="RectangleShape2D" id=3]
 extents = Vector2( 27, 18 )
 
+[sub_resource type="RectangleShape2D" id=6]
+extents = Vector2( 21, 13 )
+
 [sub_resource type="Animation" id=4]
 resource_name = "RotateUp"
 length = 0.2
@@ -65,6 +68,7 @@ tracks/1/keys = {
 
 [node name="Player" type="KinematicBody2D"]
 collision_layer = 2
+collision_mask = 17
 script = ExtResource( 9 )
 
 [node name="GlideParticles" type="CPUParticles2D" parent="."]
@@ -113,6 +117,13 @@ collision_mask = 8
 modulate = Color( 0.827451, 0, 1, 1 )
 position = Vector2( 0, -18 )
 shape = SubResource( 3 )
+
+[node name="PassThroughDetectorArea" type="Area2D" parent="."]
+collision_layer = 0
+collision_mask = 16
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="PassThroughDetectorArea"]
+shape = SubResource( 6 )
 
 [node name="StateMachine" type="Node" parent="."]
 script = ExtResource( 12 )
@@ -200,5 +211,6 @@ bus = "Sound Effects"
 stream = ExtResource( 19 )
 bus = "Sound Effects"
 [connection signal="frame_changed" from="Sprite" to="." method="_on_Sprite_frame_changed"]
+[connection signal="body_exited" from="PassThroughDetectorArea" to="." method="_on_PassThroughDetectorArea_body_exited"]
 [connection signal="state_changed" from="StateMachine" to="." method="_on_StateMachine_state_changed"]
 [connection signal="timeout" from="StateMachine/Hurt/Timer" to="StateMachine/Hurt" method="_on_Timer_timeout"]
