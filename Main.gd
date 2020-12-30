@@ -84,7 +84,7 @@ func _on_HUD_back_button() -> void:
 		OnlineMatch.leave()
 	
 	var current_screen_name = UI.ui_layer.current_screen_name
-	if current_screen_name == 'ConnectionScreen' or current_screen_name == 'MatchScreen':
+	if current_screen_name in ['ConnectionScreen', 'MatchScreen', 'CreditsScreen']:
 		UI.show_screen("TitleScreen")
 	elif not GameState.online_play:
 		UI.show_screen("TitleScreen")

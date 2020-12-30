@@ -49,17 +49,25 @@ __meta__ = {
 }
 
 [node name="LocalButton" type="Button" parent="HBoxContainer"]
-margin_left = 287.0
-margin_right = 487.0
+margin_left = 162.0
+margin_right = 362.0
 margin_bottom = 200.0
 rect_min_size = Vector2( 200, 0 )
 text = "Local"
 
 [node name="OnlineButton" type="Button" parent="HBoxContainer"]
-margin_left = 537.0
-margin_right = 737.0
+margin_left = 412.0
+margin_right = 612.0
 margin_bottom = 200.0
 rect_min_size = Vector2( 200, 0 )
 text = "Online"
+
+[node name="CreditsButton" type="Button" parent="HBoxContainer"]
+margin_left = 662.0
+margin_right = 862.0
+margin_bottom = 200.0
+rect_min_size = Vector2( 200, 0 )
+text = "Credits"
 [connection signal="pressed" from="HBoxContainer/LocalButton" to="." method="_on_LocalButton_pressed"]
 [connection signal="pressed" from="HBoxContainer/OnlineButton" to="." method="_on_OnlineButton_pressed"]
+[connection signal="pressed" from="HBoxContainer/CreditsButton" to="." method="_on_CreditsButton_pressed"]

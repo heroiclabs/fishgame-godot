@@ -8,3 +8,6 @@ func _on_LocalButton_pressed() -> void:
 
 func _on_OnlineButton_pressed() -> void:
 	emit_signal("play_online")
+
+func _on_CreditsButton_pressed() -> void:
+	UI.show_screen("CreditsScreen")

@@ -1,4 +1,4 @@
-[gd_scene load_steps=15 format=2]
+[gd_scene load_steps=16 format=2]
 
 [ext_resource path="res://Main.gd" type="Script" id=1]
 [ext_resource path="res://ui/ConnectionScreen.tscn" type="PackedScene" id=2]
@@ -14,6 +14,7 @@
 [ext_resource path="res://assets/music/DOMEFIGHTERS.ogg" type="AudioStream" id=12]
 [ext_resource path="res://assets/music/FISHSTICKS.ogg" type="AudioStream" id=13]
 [ext_resource path="res://ui/LeaderboardScreen.tscn" type="PackedScene" id=14]
+[ext_resource path="res://ui/CreditsScreen.tscn" type="PackedScene" id=15]
 
 [node name="Main" type="Node2D"]
 script = ExtResource( 1 )
@@ -37,6 +38,9 @@ visible = false
 visible = false
 
 [node name="LeaderboardScreen" parent="UILayer" instance=ExtResource( 14 )]
+visible = false
+
+[node name="CreditsScreen" parent="UILayer" instance=ExtResource( 15 )]
 visible = false
 
 [node name="HUD" parent="." instance=ExtResource( 8 )]
