@@ -56,7 +56,7 @@ var flip_h := false setget set_flip_h
 var vector := Vector2.ZERO
 var current_pickup: KinematicBody2D
 
-const PlayerActions := ['left', 'right', 'down', 'jump', 'grab', 'use']
+const PlayerActions := ['left', 'right', 'down', 'jump', 'grab', 'use', 'blop']
 var input_buffer
 
 const SYNC_DELAY := 3

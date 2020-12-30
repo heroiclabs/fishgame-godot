@@ -1,4 +1,4 @@
-[gd_scene load_steps=21 format=2]
+[gd_scene load_steps=24 format=2]
 
 [ext_resource path="res://actors/player_blue_frames.tres" type="SpriteFrames" id=1]
 [ext_resource path="res://actors/player-states/Hurt.gd" type="Script" id=2]
@@ -17,6 +17,9 @@
 [ext_resource path="res://actors/player-states/Jump.gd" type="Script" id=15]
 [ext_resource path="res://actors/player-states/Idle.gd" type="Script" id=16]
 [ext_resource path="res://assets/sounds/explosions/explosion1.wav" type="AudioStream" id=17]
+[ext_resource path="res://assets/sounds/blops/blop3.wav" type="AudioStream" id=19]
+[ext_resource path="res://assets/sounds/blops/blop1.wav" type="AudioStream" id=20]
+[ext_resource path="res://assets/sounds/blops/blop2.wav" type="AudioStream" id=21]
 
 [sub_resource type="RectangleShape2D" id=1]
 extents = Vector2( 21, 42 )
@@ -126,6 +129,20 @@ bus = "Sound Effects"
 
 [node name="Explode3" type="AudioStreamPlayer" parent="Sounds/Explode"]
 stream = ExtResource( 13 )
+bus = "Sound Effects"
+
+[node name="Blop" type="Node" parent="Sounds"]
+
+[node name="Blop1" type="AudioStreamPlayer" parent="Sounds/Blop"]
+stream = ExtResource( 20 )
+bus = "Sound Effects"
+
+[node name="Blop2" type="AudioStreamPlayer" parent="Sounds/Blop"]
+stream = ExtResource( 21 )
+bus = "Sound Effects"
+
+[node name="Blop3" type="AudioStreamPlayer" parent="Sounds/Blop"]
+stream = ExtResource( 19 )
 bus = "Sound Effects"
 [connection signal="frame_changed" from="Sprite" to="." method="_on_Sprite_frame_changed"]
 [connection signal="state_changed" from="StateMachine" to="." method="_on_StateMachine_state_changed"]

@@ -8,6 +8,7 @@ func _state_enter(info: Dictionary) -> void:
 
 func _state_physics_process(delta: float) -> void:
 	_check_pickup_or_throw_or_use()
+	_check_blop()
 	
 	var input_vector = _get_player_input_vector()
 	if host.input_buffer.is_action_just_pressed("jump"):

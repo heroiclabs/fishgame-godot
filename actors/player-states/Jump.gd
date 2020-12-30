@@ -10,6 +10,7 @@ func _state_enter(info: Dictionary) -> void:
 
 func _state_physics_process(delta: float) -> void:
 	_check_pickup_or_throw_or_use()
+	_check_blop()
 	
 	if host.is_on_floor():
 		get_parent().change_state("Idle")

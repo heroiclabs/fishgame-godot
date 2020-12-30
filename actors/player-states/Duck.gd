@@ -5,6 +5,7 @@ func _state_enter(info: Dictionary) -> void:
 
 func _state_physics_process(delta: float) -> void:
 	_check_pickup_or_throw_or_use()
+	_check_blop()
 	
 	# Decelerate to 0, but with a "slide".
 	if host.vector.x < 0:

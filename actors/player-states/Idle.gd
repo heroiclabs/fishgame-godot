@@ -20,8 +20,13 @@ func _check_pickup_or_throw_or_use():
 	elif host.input_buffer.is_action_just_pressed("use"):
 		host.try_use()
 
+func _check_blop():
+	if host.input_buffer.is_action_just_pressed("blop"):
+		host.sounds.play("Blop")
+
 func _state_physics_process(delta: float) -> void:
 	_check_pickup_or_throw_or_use()
+	_check_blop()
 	
 	var input_vector = _get_player_input_vector()
 	
