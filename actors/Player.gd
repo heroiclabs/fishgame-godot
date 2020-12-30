@@ -55,6 +55,7 @@ onready var ducking_collision_shape := $DuckingCollisionShape
 onready var gravity: float = float(ProjectSettings.get_setting("physics/2d/default_gravity"))
 
 var flip_h := false setget set_flip_h
+var show_gliding := false setget set_show_gliding
 
 const ONE_WAY_PLATFORMS_COLLISION_BIT := 4
 var pass_through_one_way_platforms := false setget set_pass_through_one_way_platforms
@@ -116,6 +117,18 @@ func set_pass_through_one_way_platforms(_pass_through: bool) -> void:
 
 func _on_PassThroughDetectorArea_body_exited(body: Node) -> void:
 	self.pass_through_one_way_platforms = false
+
+func set_show_gliding(_show_gliding: bool) -> void:
+	if show_gliding != _show_gliding:
+		show_gliding = _show_gliding
+		
+		glide_particles.visible = show_gliding
+		glide_particles.emitting = show_gliding
+		
+		if show_gliding:
+			pickup_animation_player.play("RotateUp")
+		else:
+			pickup_animation_player.play_backwards("RotateUp")
 
 func _on_Sprite_frame_changed() -> void:
 	var texture: Texture = sprite.frames.get_frame(sprite.animation, sprite.frame)
@@ -246,7 +259,7 @@ func _physics_process(delta: float) -> void:
 			if sync_forced or input_buffer_changed or sync_counter >= SYNC_DELAY:
 				sync_counter = 0
 				sync_forced = false
-				OnlineMatch.custom_rpc(self, "update_remote_player", [input_buffer.buffer, state_machine.current_state.name, sync_state_info, global_position, vector, sprite.animation, sprite.frame, flip_h, pass_through_one_way_platforms])
+				OnlineMatch.custom_rpc(self, "update_remote_player", [input_buffer.buffer, state_machine.current_state.name, sync_state_info, global_position, vector, sprite.animation, sprite.frame, flip_h, show_gliding, pass_through_one_way_platforms])
 				if sync_state_info.size() > 0:
 					sync_state_info.clear()
 		else:
@@ -256,7 +269,7 @@ func update_pickup_positions() -> void:
 	if current_pickup:
 		current_pickup.global_transform = pickup_position.global_transform
 
-func update_remote_player(_input_buffer: Dictionary, current_state: String, state_info: Dictionary, _position: Vector2, _vector: Vector2, animation: String, frame: int, _flip_h: bool, _pass_through: bool) -> void:
+func update_remote_player(_input_buffer: Dictionary, current_state: String, state_info: Dictionary, _position: Vector2, _vector: Vector2, animation: String, frame: int, _flip_h: bool, show_gliding: bool, _pass_through: bool) -> void:
 	# Initialize the input buffer.
 	if input_buffer == null:
 		input_buffer = InputBuffer.new(PlayerActions, input_prefix)
@@ -269,6 +282,7 @@ func update_remote_player(_input_buffer: Dictionary, current_state: String, stat
 	sprite.frame = frame
 	_on_Sprite_frame_changed()
 	set_flip_h(_flip_h)
+	set_show_gliding(show_gliding)
 	set_pass_through_one_way_platforms(_pass_through)
 	update_pickup_positions()
 
