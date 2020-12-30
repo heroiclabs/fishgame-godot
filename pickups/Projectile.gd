@@ -18,6 +18,9 @@ func shoot(_start_position: Vector2, _vector: Vector2, _max_distance: float) -> 
 	
 	global_position = _start_position
 	trail.add_point(_start_position)
+	
+	# Advance one frame right away, to make it harder to shoot yourself.
+	_physics_process(1.0 / 60.0)
 
 func _physics_process(delta: float) -> void:
 	if vector == Vector2.ZERO:

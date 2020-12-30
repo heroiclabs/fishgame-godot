@@ -14,11 +14,14 @@ func _check_pickup_or_throw_or_use():
 	# with if it runs on a remote player.
 	if GameState.online_play and not host.player_controlled:
 		return
-		
+	
+	# We use call_deferred() here so that those operation happen after we've
+	# moved the player, so we aren't, for example, shooting from our old position
+	# rather than our new position.
 	if host.input_buffer.is_action_just_pressed("grab"):
-		host.pickup_or_throw()
+		host.call_deferred("pickup_or_throw")
 	elif host.input_buffer.is_action_just_pressed("use"):
-		host.try_use()
+		host.call_deferred("try_use")
 
 func _check_blop():
 	if host.input_buffer.is_action_just_pressed("blop"):
