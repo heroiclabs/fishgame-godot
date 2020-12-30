@@ -1,4 +1,4 @@
-[gd_scene load_steps=24 format=2]
+[gd_scene load_steps=27 format=2]
 
 [ext_resource path="res://actors/player_blue_frames.tres" type="SpriteFrames" id=1]
 [ext_resource path="res://actors/player-states/Hurt.gd" type="Script" id=2]
@@ -17,9 +17,14 @@
 [ext_resource path="res://actors/player-states/Jump.gd" type="Script" id=15]
 [ext_resource path="res://actors/player-states/Idle.gd" type="Script" id=16]
 [ext_resource path="res://assets/sounds/explosions/explosion1.wav" type="AudioStream" id=17]
+[ext_resource path="res://assets/kenney-platform-deluxe/request/rockSmall.png" type="Texture" id=18]
 [ext_resource path="res://assets/sounds/blops/blop3.wav" type="AudioStream" id=19]
 [ext_resource path="res://assets/sounds/blops/blop1.wav" type="AudioStream" id=20]
 [ext_resource path="res://assets/sounds/blops/blop2.wav" type="AudioStream" id=21]
+
+[sub_resource type="Gradient" id=5]
+offsets = PoolRealArray( 0.145695, 0.483444, 0.688742, 0.940397 )
+colors = PoolColorArray( 1, 1, 1, 1, 1, 0.541176, 0, 1, 1, 0, 0, 1, 1, 0, 0, 0 )
 
 [sub_resource type="RectangleShape2D" id=1]
 extents = Vector2( 21, 42 )
@@ -30,9 +35,56 @@ extents = Vector2( 21, 21 )
 [sub_resource type="RectangleShape2D" id=3]
 extents = Vector2( 27, 18 )
 
+[sub_resource type="Animation" id=4]
+resource_name = "RotateUp"
+length = 0.2
+tracks/0/type = "value"
+tracks/0/path = NodePath("PickupPosition:rotation_degrees")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.2 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 0,
+"values": [ 0.0, -90.0 ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("PickupPosition:position")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0, 0.2 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 0,
+"values": [ Vector2( 26, -17 ), Vector2( 37, -33 ) ]
+}
+
 [node name="Player" type="KinematicBody2D"]
 collision_layer = 2
 script = ExtResource( 9 )
+
+[node name="GlideParticles" type="CPUParticles2D" parent="."]
+position = Vector2( 0, -11 )
+emitting = false
+amount = 30
+lifetime = 0.3
+lifetime_randomness = 0.5
+texture = ExtResource( 18 )
+emission_shape = 2
+emission_rect_extents = Vector2( 8, 1 )
+direction = Vector2( 0, 1 )
+spread = 20.0
+gravity = Vector2( 0, 0 )
+initial_velocity = 80.0
+scale_amount = 0.2
+scale_amount_random = 0.2
+color_ramp = SubResource( 5 )
+hue_variation = 0.1
+hue_variation_random = 0.5
 
 [node name="Sprite" type="AnimatedSprite" parent="."]
 position = Vector2( -31, -92 )
@@ -97,6 +149,9 @@ one_shot = true
 
 [node name="Dead" type="Node" parent="StateMachine"]
 script = ExtResource( 3 )
+
+[node name="PickupAnimationPlayer" type="AnimationPlayer" parent="."]
+anims/RotateUp = SubResource( 4 )
 
 [node name="Sounds" type="Node" parent="."]
 script = ExtResource( 6 )

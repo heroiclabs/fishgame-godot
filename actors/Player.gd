@@ -26,6 +26,7 @@ export (float) var acceleration := 4000.0
 export (float) var friction := 3000.0
 export (float) var sliding_friction := 1000.0
 export (float) var jump_speed := 1350.0
+export (float) var glide_speed := -100.0
 export (float) var terminal_velocity := 2000.0
 export (float) var push_back_speed := 50.0
 export (float) var throw_velocity := 600.0
@@ -44,6 +45,8 @@ onready var sprite: AnimatedSprite = $Sprite
 onready var pickup_position: Position2D = $PickupPosition
 onready var pickup_area: Area2D = $PickupArea
 onready var state_machine := $StateMachine
+onready var pickup_animation_player: AnimationPlayer = $PickupAnimationPlayer
+onready var glide_particles: CPUParticles2D = $GlideParticles
 onready var sounds := $Sounds
 
 onready var standing_collision_shape := $StandingCollisionShape
@@ -240,7 +243,7 @@ func _physics_process(delta: float) -> void:
 
 func update_pickup_positions() -> void:
 	if current_pickup:
-		current_pickup.global_position = pickup_position.global_position
+		current_pickup.global_transform = pickup_position.global_transform
 
 func update_remote_player(_input_buffer: Dictionary, current_state: String, state_info: Dictionary, _position: Vector2, _vector: Vector2, animation: String, frame: int, flip_h: bool) -> void:
 	# Initialize the input buffer.
