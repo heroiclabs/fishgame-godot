@@ -35,9 +35,9 @@ func initialize(switch_to_login: bool = true) -> void:
 	if switch_to_login:
 		tab_container.current_tab = 0
 	
-	# If we have a stored email and password, attempt to login straight away.
-	if email != '' and password != '':
-		do_login()
+		# If we have a stored email and password, attempt to login straight away.
+		if email != '' and password != '':
+			do_login()
 
 func do_login(save_credentials: bool = false) -> void:
 	UI.hide_screen()
@@ -88,7 +88,8 @@ func _on_Create_Account_pressed() -> void:
 		UI.show_message(msg)
 		UI.show_screen("ConnectionScreen", [false])
 	else:
-		_save_credentials()
+		if save_credentials:
+			_save_credentials()
 		Online.nakama_session = nakama_session
 		UI.hide_all()
 		UI.show_screen("MatchScreen")
