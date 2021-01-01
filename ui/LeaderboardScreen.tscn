@@ -66,3 +66,4 @@ size_flags_vertical = 3
 [node name="LeaderboardRecord" parent="PanelContainer/VBoxContainer/Panel/ScrollContainer/VBoxContainer" instance=ExtResource( 1 )]
 anchor_right = 0.0
 margin_right = 910.0
+margin_bottom = 48.0

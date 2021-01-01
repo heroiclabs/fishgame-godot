@@ -1,5 +1,5 @@
-extends Control
+extends HBoxContainer
 
 func setup(username, score) -> void:
-	$HBoxContainer/UsernameLabel.text = username
-	$HBoxContainer/WinsLabel.text = str(score)
+	$UsernameLabel.text = username
+	$WinsLabel.text = str(score)
