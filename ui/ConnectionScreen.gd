@@ -43,7 +43,7 @@ func do_login(save_credentials: bool = false) -> void:
 	UI.hide_screen()
 	UI.show_message("Logging in...")
 	
-	var nakama_session = yield(Online.nakama_client.authenticate_email_async(email, password), "completed")
+	var nakama_session = yield(Online.nakama_client.authenticate_email_async(email, password, null, false), "completed")
 	
 	if nakama_session.is_exception():
 		UI.show_message("Login failed!")
