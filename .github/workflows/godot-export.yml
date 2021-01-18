@@ -1,0 +1,163 @@
+name: "godot-export"
+on:
+  push:
+    branches:
+      - '*'
+    tags:
+      - 'v*'
+
+env:
+  GODOT_VERSION: 3.2.3
+  EXPORT_NAME: fishgame-godot
+
+jobs:
+  export-windows:
+    name: Windows Export
+    runs-on: ubuntu-latest
+    container:
+      image: barichello/godot-ci:3.2.3
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          lfs: true
+      - name: Setup
+        run: |
+          mkdir -v -p ~/.local/share/godot/templates
+          mv /root/.local/share/godot/templates/${GODOT_VERSION}.stable ~/.local/share/godot/templates/${GODOT_VERSION}.stable
+      - name: Generate build variables
+        run: ./scripts/generate-build-variables.sh
+        env:
+          NAKAMA_HOST: ${{ secrets.NAKAMA_HOST }}
+          NAKAMA_PORT: ${{ secrets.NAKAMA_PORT }}
+          NAKAMA_SERVER_KEY: ${{ secrets.NAKAMA_SERVER_KEY }}
+      - name: Windows Build
+        run: |
+          mkdir -v -p build/windows
+          godot -v --export "Windows Desktop" ./build/windows/$EXPORT_NAME.exe
+      - name: Tar files
+        run: tar -cvf ./build/$EXPORT_NAME-windows.tar ./build/windows/
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v1
+        with:
+          name: ${{ env.EXPORT_NAME }}-windows
+          path: build/${{ env.EXPORT_NAME }}-windows.tar
+
+  export-linux:
+    name: Linux Export
+    runs-on: ubuntu-latest
+    container:
+      image: barichello/godot-ci:3.2.3
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          lfs: true
+      - name: Setup
+        run: |
+          mkdir -v -p ~/.local/share/godot/templates
+          mv /root/.local/share/godot/templates/${GODOT_VERSION}.stable ~/.local/share/godot/templates/${GODOT_VERSION}.stable
+      - name: Generate build variables
+        run: ./scripts/generate-build-variables.sh
+        env:
+          NAKAMA_HOST: ${{ secrets.NAKAMA_HOST }}
+          NAKAMA_PORT: ${{ secrets.NAKAMA_PORT }}
+          NAKAMA_SERVER_KEY: ${{ secrets.NAKAMA_SERVER_KEY }}
+      - name: Linux Build
+        run: |
+          mkdir -v -p build/linux
+          godot -v --export "Linux/X11" ./build/linux/$EXPORT_NAME.x86_64
+      - name: Tar files
+        run: tar -cvf ./build/$EXPORT_NAME-linux.tar ./build/linux/
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v1
+        with:
+          name: ${{ env.EXPORT_NAME }}-linux
+          path: build/${{ env.EXPORT_NAME }}-linux.tar
+
+  export-macosx:
+    name: MacOS Export
+    runs-on: ubuntu-latest
+    container:
+      image: barichello/godot-ci:3.2.3
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          lfs: true
+      - name: Setup
+        run: |
+          mkdir -v -p ~/.local/share/godot/templates
+          mv /root/.local/share/godot/templates/${GODOT_VERSION}.stable ~/.local/share/godot/templates/${GODOT_VERSION}.stable
+      - name: Generate build variables
+        run: ./scripts/generate-build-variables.sh
+        env:
+          NAKAMA_HOST: ${{ secrets.NAKAMA_HOST }}
+          NAKAMA_PORT: ${{ secrets.NAKAMA_PORT }}
+          NAKAMA_SERVER_KEY: ${{ secrets.NAKAMA_SERVER_KEY }}
+      - name: Mac Build
+        run: |
+          mkdir -v -p build/macosx
+          godot -v --export "Mac OSX" ./build/macosx/$EXPORT_NAME.zip
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v1
+        with:
+          name: ${{ env.EXPORT_NAME }}-macosx
+          path: build/macosx
+
+  release:
+    name: Release
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs:
+      - export-windows
+      - export-linux
+      - export-macosx
+    steps:
+      - name: Create release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Fish Game (Godot) ${{ github.ref }}
+          draft: true
+          prerelease: false
+      - name: Download artifacts
+        uses: actions/download-artifact@v2
+        with:
+          path: ./artifacts
+      - name: Prepare files
+        run: |
+          for x in ./artifacts/*/*.tar; do tar -xvf $x; done
+          (cd ./build && for x in *; do mv $x $EXPORT_NAME-$x; done)
+          (cd ./build && for x in *; do zip $x.zip $(find $x); done)
+      - name: Upload Windows build to release
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./build/fishgame-godot-windows.zip
+          asset_name: ${{ env.EXPORT_NAME }}-windows.zip
+          asset_content_type: application/zip
+      - name: Upload Linux build to release
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./build/fishgame-godot-linux.zip
+          asset_name: ${{ env.EXPORT_NAME }}-linux.zip
+          asset_content_type: application/zip
+      - name: Upload MacOS build to release
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./artifacts/fishgame-godot-macosx/fishgame-godot.zip
+          asset_name: ${{ env.EXPORT_NAME }}-macosx.zip
+          asset_content_type: application/zip
+
