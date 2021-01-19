@@ -1,11 +1,14 @@
 "Fish Game" for Godot
 =====================
 
-**"Fish Game" for Godot** is a 2-4 player, online multiplayer game, created as a
-demostration of [Nakama](https://heroiclabs.com/), an open-source scalable game
-server, using the [Godot](https://godotengine.org/) game engine.
+**"Fish Game" for Godot** is a 2-4 player online game built in the
+[Godot](https://godotengine.org/) game engine, created as a demostration of
+[Nakama](https://heroiclabs.com/), an open-source scalable game server.
 
-It uses the following Nakama features:
+You can download playable builds for Windows, Linux and MacOS from the
+[Releases page](https://github.com/heroiclabs/fishgame-godot/releases).
+
+**"Fish Game"** demonstrates the following Nakama features:
 
 - [User authentication](https://heroiclabs.com/docs/authentication/)
 - [Matchmaking](https://heroiclabs.com/docs/gameplay-matchmaker/)
