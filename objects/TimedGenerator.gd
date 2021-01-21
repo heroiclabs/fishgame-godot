@@ -20,7 +20,11 @@ func _get_custom_rpc_methods() -> Array:
 	]
 
 func _do_generate() -> void:
-	var pickup_name = Util.find_unique_name(get_node(pickup_parent_path), 'Pickup-')
+	var pickup_parent = get_node(pickup_parent_path)
+	if not pickup_parent:
+		return
+	
+	var pickup_name = Util.find_unique_name(pickup_parent, 'Pickup-')
 	if GameState.online_play:
 		OnlineMatch.custom_rpc_sync(self, "generate", [pickup_name])
 	else:
@@ -31,6 +35,8 @@ func generate(pickup_name: String) -> void:
 		return
 	
 	var pickup_parent = get_node(pickup_parent_path)
+	if not pickup_parent:
+		return
 	
 	current_pickup = pickup_scene.instance()
 	current_pickup.name = pickup_name
