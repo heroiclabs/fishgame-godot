@@ -3,6 +3,7 @@ extends Node
 # Variables for developers to customize.
 var min_players := 2
 var max_players := 4
+var client_version := ''
 
 # Nakama variables:
 var nakama_socket: NakamaSocket setget _set_readonly_variable
@@ -155,6 +156,17 @@ func start_matchmaking(_nakama_socket: NakamaSocket, data: Dictionary = {}) -> v
 	else:
 		data['max_count'] = max_players
 	
+	if client_version != '':
+		if not data.has('string_properties'):
+			data['string_properties'] = {}
+		data['string_properties']['client_version'] = client_version
+		
+		var query = '+properties.client_version:' + client_version
+		if data.has('query'):
+			data['query'] += ' ' + query
+		else:
+			data['query'] = query
+	
 	match_state = MatchState.MATCHING
 	var result = yield(nakama_socket.add_matchmaker_async(data.get('query', '*'), data['min_count'], data['max_count'], data.get('string_properties', {}), data.get('numeric_properties', {})), 'completed')
 	if result.is_exception():
@@ -302,6 +314,7 @@ func _on_nakama_match_presence(data: NakamaRTAPI.MatchPresenceEvent) -> void:
 				# Tell this player (and the others) about all the players peer ids.
 				nakama_socket.send_match_state_async(match_id, MatchOpCode.JOIN_SUCCESS, JSON.print({
 					players = serialize_players(players),
+					client_version = client_version,
 				}))
 				
 				_check_enough_players()
@@ -395,6 +408,12 @@ func _on_nakama_match_state(data: NakamaRTAPI.MatchData):
 			
 			node.callv(content['method'], str2var(content['args']))
 	if data.op_code == MatchOpCode.JOIN_SUCCESS && match_mode == MatchMode.JOIN:
+		var host_client_version = content.get('client_version', '')
+		if client_version != host_client_version:
+			leave()
+			emit_signal("error", "Client version doesn't match host")
+			return
+		
 		var content_players = unserialize_players(content['players'])
 		my_peer_id = content_players[my_session_id].peer_id
 		for session_id in content_players:

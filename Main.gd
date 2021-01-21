@@ -28,6 +28,9 @@ func _ready() -> void:
 	Online.nakama_port = Build.NAKAMA_PORT
 	Online.nakama_scheme = 'https' if Build.NAKAMA_USE_SSL else 'http'
 	
+	# Set the client version based on value from the build.
+	OnlineMatch.client_version = Build.CLIENT_VERSION
+ 	
 	randomize()
 	music.play_random()
 
