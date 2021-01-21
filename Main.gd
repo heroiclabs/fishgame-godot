@@ -30,7 +30,7 @@ func _ready() -> void:
 	
 	# Set the client version based on value from the build.
 	OnlineMatch.client_version = Build.CLIENT_VERSION
- 	
+	
 	randomize()
 	music.play_random()
 
