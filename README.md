@@ -5,6 +5,8 @@
 [Godot](https://godotengine.org/) game engine, created as a demostration of
 [Nakama](https://heroiclabs.com/), an open-source scalable game server.
 
+![Animated GIF showing gameplay](assets/screenshots/fishgame-godot-art1.gif)
+
 You can download playable builds for Windows, Linux and MacOS from the
 [Releases page](https://github.com/heroiclabs/fishgame-godot/releases).
 
