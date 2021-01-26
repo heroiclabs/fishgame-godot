@@ -1,12 +1,18 @@
 extends KinematicBody2D
 class_name Pickup
 
-onready var initial_scale = scale
+onready var held_position: Position2D = $HeldPosition
+onready var original_parent: Node2D = get_parent()
 onready var gravity: float = float(ProjectSettings.get_setting("physics/2d/default_gravity"))
 onready var linear_damp: float = float(ProjectSettings.get_setting("physics/2d/default_linear_damp"))
 onready var angular_damp: float = float(ProjectSettings.get_setting("physics/2d/default_angular_damp"))
 
-var flip_h := false setget set_flip_h
+enum PickupPosition {
+	FRONT,
+	BACK,
+}
+
+export (PickupPosition) var pickup_position = PickupPosition.FRONT
 
 enum PickupState {
 	FREE = 0,
@@ -20,6 +26,7 @@ enum PickupState {
 const MIN_LINEAR_VELOCITY := 10.0
 const MIN_ANGULAR_VELOCITY := 10.0
 
+var player: Node2D
 var pickup_state: int = PickupState.FREE
 var throw_position := Vector2.ZERO
 
@@ -38,22 +45,14 @@ func _get_custom_rpc_methods() -> Array:
 		'_do_physics_finished',
 	]
 
-func set_flip_h(_flip_h: bool) -> void:
-	flip_h = _flip_h
-	
-	if flip_h:
-		scale.x = -initial_scale.x * sign(scale.y)
-	else:
-		scale.x = initial_scale.x * sign(scale.y)
-
 func can_pickup() -> bool:
 	return pickup_state == PickupState.FREE or pickup_state == PickupState.THROWN
 
-func pickup(_pickup_position: Vector2) -> void:
+func pickup(_player: Node2D) -> void:
 	pickup_state = PickupState.PICKED_UP
+	player = _player
+	rotation = 0.0
 	sleeping = true
-	global_position = _pickup_position
-	global_rotation = 0.0
 	emit_signal("picked_up")
 
 func _on_throw() -> void:
@@ -66,8 +65,9 @@ func _on_throw_finished() -> void:
 
 func throw(_throw_position: Vector2, _throw_vector: Vector2, _throw_torque: float) -> void:
 	_on_throw()
-
+	
 	pickup_state = PickupState.THROWING
+	player = null
 	
 	throw_position = _throw_position
 	linear_velocity = _throw_vector

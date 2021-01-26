@@ -1,45 +1,144 @@
-[gd_scene load_steps=8 format=2]
+[gd_scene load_steps=11 format=2]
 
-[ext_resource path="res://assets/kenney-platform-deluxe/request.png" type="Texture" id=1]
+[ext_resource path="res://assets/sprites/gun.png" type="Texture" id=1]
 [ext_resource path="res://pickups/Pickup.tscn" type="PackedScene" id=2]
 [ext_resource path="res://pickups/Gun.gd" type="Script" id=3]
-[ext_resource path="res://assets/sounds/shoot.wav" type="AudioStream" id=4]
+[ext_resource path="res://assets/sounds/shoot.ogg" type="AudioStream" id=4]
 [ext_resource path="res://components/Sounds.gd" type="Script" id=5]
 [ext_resource path="res://assets/sounds/empty.wav" type="AudioStream" id=6]
 
 [sub_resource type="CapsuleShape2D" id=1]
-radius = 15.0
-height = 10.0
+radius = 11.9999
+height = 38.0001
+
+[sub_resource type="RectangleShape2D" id=4]
+
+[sub_resource type="Animation" id=2]
+resource_name = "Idle"
+length = 0.1
+tracks/0/type = "value"
+tracks/0/path = NodePath("GunSprite:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 1,
+"values": [ 0 ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("MuzzleFlashSprite:frame")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 1,
+"values": [ 8 ]
+}
+
+[sub_resource type="Animation" id=3]
+resource_name = "Shoot"
+length = 0.5
+tracks/0/type = "value"
+tracks/0/path = NodePath("GunSprite:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.1, 0.2, 0.4 ),
+"transitions": PoolRealArray( 1, 1, 1, 1 ),
+"update": 1,
+"values": [ 4, 5, 6, 0 ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("MuzzleFlashSprite:frame")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0, 0.1, 0.2, 0.3, 0.4 ),
+"transitions": PoolRealArray( 1, 1, 1, 1, 1 ),
+"update": 1,
+"values": [ 8, 9, 10, 11, 8 ]
+}
+tracks/2/type = "method"
+tracks/2/path = NodePath(".")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/keys = {
+"times": PoolRealArray( 0.1 ),
+"transitions": PoolRealArray( 1 ),
+"values": [ {
+"args": [  ],
+"method": "_fire_projectile"
+} ]
+}
 
 [node name="Gun" instance=ExtResource( 2 )]
 script = ExtResource( 3 )
 
-[node name="Sprite" type="Sprite" parent="." index="0"]
-position = Vector2( 6, -4.5 )
+[node name="GunSprite" type="Sprite" parent="." index="0"]
+position = Vector2( 14, -4 )
 texture = ExtResource( 1 )
-region_enabled = true
-region_rect = Rect2( 224, 24, 38, 27 )
+vframes = 5
+hframes = 4
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="." index="1"]
-position = Vector2( 5, -7 )
+[node name="MuzzleFlashSprite" type="Sprite" parent="." index="1"]
+position = Vector2( 16, -4 )
+texture = ExtResource( 1 )
+vframes = 5
+hframes = 4
+frame = 8
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." index="2"]
 rotation = 1.5708
 shape = SubResource( 1 )
 
-[node name="ProjectilePosition" type="Position2D" parent="." index="2"]
-position = Vector2( 25, -8 )
+[node name="ProjectilePosition" type="Position2D" parent="." index="3"]
+position = Vector2( 42, -4 )
 
-[node name="CooldownTimer" type="Timer" parent="." index="3"]
+[node name="SparksPosition" type="Position2D" parent="." index="4"]
+position = Vector2( 31, -4 )
+
+[node name="DudDetector" type="Area2D" parent="." index="5"]
+collision_layer = 0
+collision_mask = 17
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="DudDetector" index="0"]
+position = Vector2( 31, -4 )
+shape = SubResource( 4 )
+
+[node name="CooldownTimer" type="Timer" parent="." index="6"]
 process_mode = 0
 one_shot = true
 
-[node name="Sounds" type="Node" parent="." index="4"]
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." index="7"]
+autoplay = "Idle"
+anims/Idle = SubResource( 2 )
+anims/Shoot = SubResource( 3 )
+
+[node name="Sounds" type="Node" parent="." index="8"]
 script = ExtResource( 5 )
 
 [node name="Shoot" type="AudioStreamPlayer" parent="Sounds" index="0"]
 stream = ExtResource( 4 )
+volume_db = 5.0
 bus = "Sound Effects"
 
 [node name="Empty" type="AudioStreamPlayer" parent="Sounds" index="1"]
 stream = ExtResource( 6 )
 bus = "Sound Effects"
+
+[node name="HeldPosition" parent="." index="9"]
+position = Vector2( -17, 0 )
 [connection signal="timeout" from="CooldownTimer" to="." method="_on_CooldownTimer_timeout"]
+[connection signal="animation_finished" from="AnimationPlayer" to="." method="_on_AnimationPlayer_animation_finished"]

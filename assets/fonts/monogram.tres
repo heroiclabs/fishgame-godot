@@ -3,5 +3,5 @@
 [ext_resource path="res://assets/fonts/monogram.ttf" type="DynamicFontData" id=1]
 
 [resource]
-size = 60
+size = 30
 font_data = ExtResource( 1 )

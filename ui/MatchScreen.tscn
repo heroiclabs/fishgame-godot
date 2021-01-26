@@ -23,37 +23,42 @@ margin_left = 50.0
 margin_top = 50.0
 margin_right = -50.0
 margin_bottom = -100.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer"]
 margin_left = 7.0
 margin_top = 7.0
-margin_right = 917.0
-margin_bottom = 443.0
+margin_right = 533.0
+margin_bottom = 203.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 custom_constants/separation = 10
 
 [node name="MatchPanel" type="Panel" parent="PanelContainer/VBoxContainer"]
-margin_right = 910.0
-margin_bottom = 138.0
+margin_right = 526.0
+margin_bottom = 58.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
 [node name="Label" type="Label" parent="PanelContainer/VBoxContainer/MatchPanel"]
-margin_left = 16.0
-margin_top = 50.0
-margin_right = 326.0
-margin_bottom = 98.0
+anchor_top = 0.5
+anchor_bottom = 0.5
+margin_left = 7.0
+margin_top = -12.0
+margin_right = 156.0
+margin_bottom = 12.0
 text = "Find at least"
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
 [node name="SpinBox" type="SpinBox" parent="PanelContainer/VBoxContainer/MatchPanel"]
-margin_left = 327.0
-margin_top = 47.0
-margin_right = 629.0
-margin_bottom = 105.0
+margin_left = 157.0
+margin_top = 13.0
+margin_right = 315.0
+margin_bottom = 47.0
 min_value = 2.0
 max_value = 4.0
 value = 2.0
@@ -68,27 +73,29 @@ anchor_left = 1.0
 anchor_top = 0.5
 anchor_right = 1.0
 anchor_bottom = 0.5
-margin_left = -187.0
-margin_top = -39.5
-margin_right = -12.0
-margin_bottom = 39.5
+margin_left = -105.0
+margin_top = -25.0
+margin_right = -5.0
+margin_bottom = 25.0
 text = "Match"
 __meta__ = {
-"_edit_use_anchors_": true
+"_edit_use_anchors_": false
 }
 
 [node name="CreatePanel" type="Panel" parent="PanelContainer/VBoxContainer"]
-margin_top = 148.0
-margin_right = 910.0
-margin_bottom = 287.0
+margin_top = 68.0
+margin_right = 526.0
+margin_bottom = 127.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
 [node name="Label" type="Label" parent="PanelContainer/VBoxContainer/CreatePanel"]
-margin_left = 17.0
-margin_top = 52.0
-margin_right = 523.0
-margin_bottom = 100.0
+anchor_top = 0.5
+anchor_bottom = 0.5
+margin_left = 7.0
+margin_top = -12.0
+margin_right = 249.0
+margin_bottom = 12.0
 text = "Create a private match"
 __meta__ = {
 "_edit_use_anchors_": false
@@ -99,46 +106,48 @@ anchor_left = 1.0
 anchor_top = 0.5
 anchor_right = 1.0
 anchor_bottom = 0.5
-margin_left = -188.0
-margin_top = -42.5
-margin_right = -13.0
-margin_bottom = 36.5
+margin_left = -105.0
+margin_top = -25.0
+margin_right = -5.0
+margin_bottom = 25.0
 text = "Create"
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
 [node name="JoinPanel" type="Panel" parent="PanelContainer/VBoxContainer"]
-margin_top = 297.0
-margin_right = 910.0
-margin_bottom = 436.0
+margin_top = 137.0
+margin_right = 526.0
+margin_bottom = 196.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
 [node name="Label" type="Label" parent="PanelContainer/VBoxContainer/JoinPanel"]
-margin_left = 19.0
-margin_top = 52.0
-margin_right = 274.0
-margin_bottom = 100.0
+anchor_top = 0.5
+anchor_bottom = 0.5
+margin_left = 7.0
+margin_top = -12.0
+margin_right = 128.0
+margin_bottom = 12.0
 text = "Join match:"
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
 [node name="LineEdit" type="LineEdit" parent="PanelContainer/VBoxContainer/JoinPanel"]
-margin_left = 274.0
-margin_top = 51.0
-margin_right = 560.0
-margin_bottom = 109.0
+margin_left = 134.0
+margin_top = 14.0
+margin_right = 325.0
+margin_bottom = 48.0
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
 [node name="PasteButton" type="Button" parent="PanelContainer/VBoxContainer/JoinPanel"]
-margin_left = 560.0
-margin_top = 52.0
-margin_right = 687.0
-margin_bottom = 108.0
+margin_left = 326.0
+margin_top = 16.0
+margin_right = 393.0
+margin_bottom = 46.0
 text = "Paste"
 __meta__ = {
 "_edit_use_anchors_": false
@@ -149,10 +158,10 @@ anchor_left = 1.0
 anchor_top = 0.5
 anchor_right = 1.0
 anchor_bottom = 0.5
-margin_left = -190.0
-margin_top = -40.0
-margin_right = -15.0
-margin_bottom = 39.0
+margin_left = -105.0
+margin_top = -25.0
+margin_right = -5.0
+margin_bottom = 25.0
 text = "Join"
 __meta__ = {
 "_edit_use_anchors_": false
@@ -163,8 +172,11 @@ anchor_left = 1.0
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-margin_left = -380.0
+margin_left = -250.0
 margin_top = -54.0
 text = "Leaderboard"
+__meta__ = {
+"_edit_use_anchors_": false
+}
 [connection signal="pressed" from="PanelContainer/VBoxContainer/JoinPanel/PasteButton" to="." method="_on_PasteButton_pressed"]
 [connection signal="pressed" from="LeaderboardButton" to="." method="_on_LeaderboardButton_pressed"]

@@ -4,12 +4,12 @@
 [ext_resource path="res://assets/theme.tres" type="Theme" id=2]
 
 [sub_resource type="DynamicFont" id=1]
-size = 48
-extra_spacing_bottom = 5
+size = 28
+extra_spacing_bottom = 3
 font_data = ExtResource( 1 )
 
 [sub_resource type="DynamicFont" id=2]
-size = 42
+size = 24
 font_data = ExtResource( 1 )
 
 [node name="CreditsScreen" type="Control"]
@@ -30,7 +30,7 @@ __meta__ = {
 
 [node name="Label" type="Label" parent="."]
 anchor_right = 1.0
-margin_top = 50.0
+margin_top = 25.0
 margin_bottom = 48.0
 text = "Credits"
 align = 1
@@ -39,7 +39,7 @@ align = 1
 anchor_right = 1.0
 anchor_bottom = 1.0
 margin_left = 15.0
-margin_top = 150.0
+margin_top = 89.0
 margin_right = -15.0
 margin_bottom = -15.0
 custom_fonts/bold_font = SubResource( 1 )
@@ -49,7 +49,7 @@ bbcode_text = "[b]Programming:[/b]
 	[color=aqua]David Snopek[/color] from [color=yellow][url=https://www.snopekgames.com]Snopek Games[/url][/color]
 
 [b]Art:[/b]
-	[color=yellow][url=https://www.kenney.nl/assets/platformer-art-deluxe]Platformer Art Deluxe[/url][/color] by [color=aqua]Kenney.nl[/color]
+	[color=aqua]Orlando Herrera[/color] a.k.a. [color=yellow][url=https://pixelfrog-store.itch.io/]Pixel Frog[/url][/color]
 
 [b]Music/Sound:[/b]
 	[color=aqua]Jakob T. Rypdal[/color]
@@ -60,7 +60,7 @@ text = "Programming:
 	David Snopek from Snopek Games
 
 Art:
-	Platformer Art Deluxe by Kenney.nl
+	Orlando Herrera a.k.a. Pixel Frog
 
 Music/Sound:
 	Jakob T. Rypdal

@@ -4,7 +4,7 @@
 [ext_resource path="res://objects/TimedGenerator.gd" type="Script" id=2]
 
 [sub_resource type="RectangleShape2D" id=1]
-extents = Vector2( 35, 35 )
+extents = Vector2( 15, 15 )
 
 [sub_resource type="Animation" id=2]
 resource_name = "Glow"
@@ -29,15 +29,16 @@ script = ExtResource( 2 )
 
 [node name="Sprite" type="Sprite" parent="."]
 modulate = Color( 1, 0.768627, 0.768627, 1 )
-position = Vector2( 35, -35 )
+position = Vector2( 15, -15 )
+scale = Vector2( 0.428571, 0.428571 )
 texture = ExtResource( 1 )
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-position = Vector2( 35, -35 )
+position = Vector2( 15, -15 )
 shape = SubResource( 1 )
 
 [node name="PickupPosition" type="Position2D" parent="."]
-position = Vector2( 33, -106 )
+position = Vector2( 15, -40 )
 
 [node name="Timer" type="Timer" parent="."]
 one_shot = true

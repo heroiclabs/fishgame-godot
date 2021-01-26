@@ -1,30 +1,40 @@
 extends Area2D
 
-onready var ray_cast = $RayCast2D
+onready var ray_cast := $RayCast2D
 onready var trail := $Trail
+onready var hitbox := $Hitbox
+onready var animation_player := $AnimationPlayer
 
 var vector := Vector2.ZERO
 var start_position := Vector2.ZERO
 var max_distance := 0.0
+var dud := false
 
 func _ready():
 	trail.set_as_toplevel(true)
 	trail.global_position = Vector2(0, 0)
 
-func shoot(_start_position: Vector2, _vector: Vector2, _max_distance: float) -> void:
+func shoot(_start_position: Vector2, _vector: Vector2, _max_distance: float, _dud: bool) -> void:
 	start_position = _start_position
 	vector = _vector
 	max_distance = _max_distance
+	dud = _dud
 	
 	global_position = _start_position
-	trail.add_point(_start_position)
 	
-	# Advance one frame right away, to make it harder to shoot yourself.
-	_physics_process(1.0 / 60.0)
+	if dud:
+		hitbox.disabled = true
+		hit()
 
 func _physics_process(delta: float) -> void:
-	if vector == Vector2.ZERO:
+	if vector == Vector2.ZERO or dud:
 		return
+	
+	# Add to trail before moving project, so we are using the last position
+	# from the last frame.
+	trail.add_point(global_position)
+	while trail.get_point_count() > 5:
+		trail.remove_point(0)
 	
 	var increment = vector * delta
 	ray_cast.cast_to = increment
@@ -35,12 +45,17 @@ func _physics_process(delta: float) -> void:
 	else:
 		global_position += increment
 	
-	trail.add_point(global_position)
-	while trail.get_point_count() > 5:
-		trail.remove_point(0)
-	
 	if start_position.distance_to(global_position) >= max_distance:
-		queue_free()
+		hit()
 
-func _on_Projectile_body_entered(body: Node) -> void:
-	queue_free()
+func _on_Projectile_body_entered(body: Node) -> void:	
+	if not dud:
+		hit()
+
+func hit() -> void:
+	vector = Vector2.ZERO
+	animation_player.play("Hit")
+
+func _on_AnimationPlayer_animation_finished(anim_name: String) -> void:
+	if anim_name == 'Hit':
+		queue_free()

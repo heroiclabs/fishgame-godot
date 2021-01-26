@@ -1,0 +1,71 @@
+[gd_scene load_steps=8 format=2]
+
+[ext_resource path="res://assets/sprites/generator_flat.png" type="Texture" id=1]
+[ext_resource path="res://objects/TimedGenerator.gd" type="Script" id=2]
+[ext_resource path="res://assets/kenney-platform-deluxe/request/rockSmall.png" type="Texture" id=3]
+
+[sub_resource type="Curve" id=3]
+min_value = 0.01
+max_value = 0.1
+_data = [ Vector2( 0, 0.101023 ), 0.0, 0.0, 0, 0, Vector2( 0.745843, 0.0560227 ), -0.191364, -0.191364, 0, 0, Vector2( 0.995249, 0.0110227 ), 0.0, 0.0, 0, 0 ]
+
+[sub_resource type="Gradient" id=4]
+offsets = PoolRealArray( 0, 0.851759, 1 )
+colors = PoolColorArray( 0.898039, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 )
+
+[sub_resource type="RectangleShape2D" id=1]
+extents = Vector2( 15, 1 )
+
+[sub_resource type="Animation" id=2]
+resource_name = "Glow"
+loop = true
+tracks/0/type = "value"
+tracks/0/path = NodePath("Sprite:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.7 ),
+"transitions": PoolRealArray( 1, 6 ),
+"update": 0,
+"values": [ Color( 1, 0.768627, 0.768627, 1 ), Color( 0.898039, 0, 1, 1 ) ]
+}
+
+[node name="TimedGenerator" type="StaticBody2D" groups=[
+"map_object",
+]]
+collision_layer = 0
+collision_mask = 9
+script = ExtResource( 2 )
+
+[node name="CPUParticles2D" type="CPUParticles2D" parent="."]
+position = Vector2( 15, -2 )
+amount = 24
+lifetime = 1.1
+lifetime_randomness = 0.2
+texture = ExtResource( 3 )
+emission_shape = 2
+emission_rect_extents = Vector2( 11, 1 )
+gravity = Vector2( 0, -98 )
+scale_amount_curve = SubResource( 3 )
+color_ramp = SubResource( 4 )
+
+[node name="Sprite" type="Sprite" parent="."]
+modulate = Color( 1, 0.768627, 0.768627, 1 )
+position = Vector2( 15, -15 )
+texture = ExtResource( 1 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2( 15, -1 )
+shape = SubResource( 1 )
+
+[node name="PickupPosition" type="Position2D" parent="."]
+position = Vector2( 15, -10 )
+
+[node name="Timer" type="Timer" parent="."]
+one_shot = true
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+autoplay = "Glow"
+anims/Glow = SubResource( 2 )

@@ -3,7 +3,10 @@ extends "res://addons/snopek-state-machine/State.gd"
 onready var host = $"../.."
 
 func _state_enter(info: Dictionary) -> void:
-	host.play_animation("Idle" if host.vector.x == 0.0 else "Walk")
+	if info.get('landing', false):
+		host.play_animation("Land")
+	else:
+		host.play_animation("Idle" if host.vector.x == 0.0 else "Walk")
 
 func _get_player_input_vector() -> Vector2:
 	return Vector2(host.input_buffer.get_action_strength("right") - host.input_buffer.get_action_strength("left"), 0)
@@ -23,13 +26,18 @@ func _check_pickup_or_throw_or_use():
 	elif host.input_buffer.is_action_just_pressed("use"):
 		host.call_deferred("try_use")
 
-func _check_blop():
-	if host.input_buffer.is_action_just_pressed("blop"):
-		host.sounds.play("Blop")
+func _decelerate_to_zero(delta: float) -> void:
+	if host.vector.x < 0:
+		host.vector.x = min(0.0, host.vector.x + (host.friction * delta))
+	elif host.vector.x > 0:
+		host.vector.x = max(0.0, host.vector.x - (host.friction * delta))
 
 func _state_physics_process(delta: float) -> void:
 	_check_pickup_or_throw_or_use()
-	_check_blop()
+	
+	if host.vector.y > 0:
+		get_parent().change_state("Fall")
+		return
 	
 	var input_vector = _get_player_input_vector()
 	
@@ -48,12 +56,15 @@ func _state_physics_process(delta: float) -> void:
 		})
 		return
 	
-	# Decelerate to 0.
-	if host.vector.x < 0:
-		host.vector.x = min(0.0, host.vector.x + (host.friction * delta))
-	elif host.vector.x > 0:
-		host.vector.x = max(0.0, host.vector.x - (host.friction * delta))
+	_decelerate_to_zero(delta)
+	
+	if host.input_buffer.is_action_just_pressed("blop"):
+		host.play_animation("Blop")
 	
 	# If we just decelerated to 0, then switch to the idle animation.
-	if host.sprite.animation != "Idle" and host.vector.x == 0:
+	if not host.get_current_animation() in ["Idle", "Blop", "Land"] and host.vector.x == 0:
+		host.play_animation("Idle")
+
+func _on_SpriteAnimationPlayer_animation_finished(anim_name: String) -> void:
+	if host.state_machine.current_state == self and anim_name == "Land":
 		host.play_animation("Idle")

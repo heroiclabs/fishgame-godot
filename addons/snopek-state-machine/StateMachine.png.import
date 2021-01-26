@@ -2,7 +2,7 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/StateMachine.png-316b0b0081af107ed09d51c3cb109a4c.stex"
+path="res://.import/StateMachine.png-c0bbe632abcf962551d4ccbc9ca6a6e9.stex"
 metadata={
 "vram_texture": false
 }
@@ -10,7 +10,7 @@ metadata={
 [deps]
 
 source_file="res://addons/snopek-state-machine/StateMachine.png"
-dest_files=[ "res://.import/StateMachine.png-316b0b0081af107ed09d51c3cb109a4c.stex" ]
+dest_files=[ "res://.import/StateMachine.png-c0bbe632abcf962551d4ccbc9ca6a6e9.stex" ]
 
 [params]
 

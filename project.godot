@@ -120,8 +120,12 @@ Util="*res://autoload/Util.gd"
 
 [display]
 
+window/size/width=640
+window/size/height=360
+window/size/test_width=1280
+window/size/test_height=720
 window/stretch/mode="2d"
-window/stretch/aspect="expand"
+window/stretch/aspect="keep_width"
 
 [editor_plugins]
 
@@ -141,7 +145,7 @@ texture={
 "compress/normal_map": 0,
 "detect_3d": false,
 "flags/anisotropic": false,
-"flags/filter": true,
+"flags/filter": false,
 "flags/mipmaps": false,
 "flags/repeat": 0,
 "flags/srgb": 2,
@@ -333,7 +337,7 @@ player4_blop={
 
 [physics]
 
-2d/default_gravity=3000
+2d/default_gravity=1500
 
 [rendering]
 

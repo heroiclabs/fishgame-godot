@@ -1,100 +1,99 @@
-[gd_scene load_steps=11 format=2]
+[gd_scene load_steps=10 format=2]
 
 [ext_resource path="res://pickups/Pickup.tscn" type="PackedScene" id=1]
-[ext_resource path="res://assets/kenney-platform-deluxe/request.png" type="Texture" id=2]
+[ext_resource path="res://assets/sprites/sword.png" type="Texture" id=2]
 [ext_resource path="res://components/Hitbox.tscn" type="PackedScene" id=3]
 [ext_resource path="res://pickups/Sword.gd" type="Script" id=4]
 [ext_resource path="res://assets/sounds/sword.wav" type="AudioStream" id=5]
 [ext_resource path="res://components/Sounds.gd" type="Script" id=6]
 
 [sub_resource type="RectangleShape2D" id=1]
-extents = Vector2( 10, 32 )
+extents = Vector2( 12.9448, 32.6482 )
 
 [sub_resource type="Animation" id=2]
-resource_name = "Reset"
+resource_name = "Idle"
 length = 0.001
 step = 0.05
 tracks/0/type = "value"
-tracks/0/path = NodePath("Sprite:rotation_degrees")
+tracks/0/path = NodePath("Hitbox:disabled")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/imported = false
 tracks/0/enabled = true
 tracks/0/keys = {
-"times": PoolRealArray( 0 ),
-"transitions": PoolRealArray( 1 ),
-"update": 0,
-"values": [ 0.0 ]
-}
-tracks/1/type = "value"
-tracks/1/path = NodePath("Hitbox:disabled")
-tracks/1/interp = 1
-tracks/1/loop_wrap = true
-tracks/1/imported = false
-tracks/1/enabled = true
-tracks/1/keys = {
 "times": PoolRealArray( 0 ),
 "transitions": PoolRealArray( 1 ),
 "update": 1,
 "values": [ true ]
 }
-
-[sub_resource type="Animation" id=3]
-length = 0.65
-step = 0.05
-tracks/0/type = "value"
-tracks/0/path = NodePath("Sprite:rotation_degrees")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/keys = {
-"times": PoolRealArray( 0, 0.5, 0.65 ),
-"transitions": PoolRealArray( 0.108819, 2, 1 ),
-"update": 0,
-"values": [ 0.0, 130.0, 0.0 ]
-}
 tracks/1/type = "value"
-tracks/1/path = NodePath("Hitbox:disabled")
+tracks/1/path = NodePath("Sprite:frame")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
 tracks/1/imported = false
 tracks/1/enabled = true
 tracks/1/keys = {
-"times": PoolRealArray( 0, 0.1 ),
-"transitions": PoolRealArray( 1, 1 ),
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
 "update": 1,
-"values": [ false, true ]
+"values": [ 0 ]
 }
 
-[sub_resource type="RectangleShape2D" id=4]
-extents = Vector2( 40, 34 )
+[sub_resource type="Animation" id=3]
+length = 0.3
+step = 0.05
+tracks/0/type = "value"
+tracks/0/path = NodePath("Hitbox:disabled")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.1, 0.2 ),
+"transitions": PoolRealArray( 1, 1, 1 ),
+"update": 1,
+"values": [ true, false, true ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("Sprite:frame")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0, 0.1, 0.2, 0.25 ),
+"transitions": PoolRealArray( 1, 1, 1, 1 ),
+"update": 1,
+"values": [ 4, 5, 6, 7 ]
+}
 
 [node name="Sword" instance=ExtResource( 1 )]
 script = ExtResource( 4 )
+pickup_position = 1
 
 [node name="Sprite" type="Sprite" parent="." index="0"]
+position = Vector2( 24, -39 )
 texture = ExtResource( 2 )
-offset = Vector2( 0, -23 )
-region_enabled = true
-region_rect = Rect2( 654, 4, 22, 64 )
+vframes = 2
+hframes = 4
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." index="1"]
-position = Vector2( 0, -23 )
+position = Vector2( 14, -29.5 )
+rotation = 0.486947
 shape = SubResource( 1 )
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="." index="2"]
-anims/Reset = SubResource( 2 )
+autoplay = "Idle"
+anims/Idle = SubResource( 2 )
 anims/Swing = SubResource( 3 )
 
 [node name="Hitbox" parent="." index="3" instance=ExtResource( 3 )]
-position = Vector2( 14, -22 )
+position = Vector2( 29, -23.5 )
 collision_mask = 2
 disabled = true
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Hitbox" index="0"]
-modulate = Color( 0.0313726, 0.00392157, 0.870588, 1 )
-shape = SubResource( 4 )
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="Hitbox" index="0"]
+polygon = PoolVector2Array( -23, -5.5, -16, -18.5, -8, -48.5, 9, -34.5, 25, -4.5, 27, 16.5, 22, 25.5, 8, 30.5, -3, 30.5, -23, 20.5 )
 
 [node name="Sounds" type="Node" parent="." index="4"]
 script = ExtResource( 6 )
@@ -102,3 +101,6 @@ script = ExtResource( 6 )
 [node name="Swing" type="AudioStreamPlayer" parent="Sounds" index="0"]
 stream = ExtResource( 5 )
 bus = "Sound Effects"
+
+[node name="HeldPosition" parent="." index="5"]
+position = Vector2( 0, -8.5 )
