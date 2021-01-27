@@ -11,9 +11,9 @@
 radius = 11.9999
 height = 38.0001
 
-[sub_resource type="RectangleShape2D" id=4]
+[sub_resource type="RectangleShape2D" id=2]
 
-[sub_resource type="Animation" id=2]
+[sub_resource type="Animation" id=3]
 resource_name = "Idle"
 length = 0.1
 tracks/0/type = "value"
@@ -41,7 +41,7 @@ tracks/1/keys = {
 "values": [ 8 ]
 }
 
-[sub_resource type="Animation" id=3]
+[sub_resource type="Animation" id=4]
 resource_name = "Shoot"
 length = 0.5
 tracks/0/type = "value"
@@ -115,7 +115,7 @@ collision_mask = 17
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="DudDetector" index="0"]
 position = Vector2( 31, -4 )
-shape = SubResource( 4 )
+shape = SubResource( 2 )
 
 [node name="CooldownTimer" type="Timer" parent="." index="6"]
 process_mode = 0
@@ -123,8 +123,8 @@ one_shot = true
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="." index="7"]
 autoplay = "Idle"
-anims/Idle = SubResource( 2 )
-anims/Shoot = SubResource( 3 )
+anims/Idle = SubResource( 3 )
+anims/Shoot = SubResource( 4 )
 
 [node name="Sounds" type="Node" parent="." index="8"]
 script = ExtResource( 5 )
