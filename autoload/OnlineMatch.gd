@@ -398,7 +398,7 @@ func _on_nakama_match_state(data: NakamaRTAPI.MatchData):
 	if data.op_code == MatchOpCode.CUSTOM_RPC:
 		if content['peer_id'] == 0 or content['peer_id'] == my_peer_id:
 			var node = get_node(content['node_path'])
-			if not node:
+			if not node or not is_instance_valid(node) or node.is_queued_for_deletion():
 				push_warning("Custom RPC: Cannot find node at path: %s" % [content['node_path']])
 				return
 			

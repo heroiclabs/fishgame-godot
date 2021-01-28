@@ -198,6 +198,9 @@ func _do_pickup(pickup_path: NodePath) -> void:
 	current_pickup.position = -current_pickup.held_position.position
 
 func _do_throw() -> void:
+	if current_pickup == null:
+		return
+	
 	sounds.play("Throw")
 	var throw_vector = (vector * throw_vector_mix) + ((Vector2.LEFT if flip_h else Vector2.RIGHT) * throw_velocity)
 	throw_vector += Vector2.UP * throw_upward_velocity
@@ -234,16 +237,16 @@ func hurt(node: Node2D) -> void:
 
 func die() -> void:
 	if GameState.online_play:
-		if current_pickup:
-			OnlineMatch.custom_rpc_sync(self, "_do_throw")
-		OnlineMatch.custom_rpc_sync(self, "_do_die")
+		if OnlineMatch.is_network_master_for_node(self):
+			if current_pickup:
+				OnlineMatch.custom_rpc_sync(self, "_do_throw")
+			OnlineMatch.custom_rpc_sync(self, "_do_die")
 	else:
 		if current_pickup:
 			_do_throw()
 		_do_die();
 
 func _do_die() -> void:
-	# @todo Move this to the Dead.gd state, if we can sync the state machine.
 	var explosion = ExplodeEffect.instance()
 	get_parent().add_child(explosion)
 	explosion.global_position = global_position
