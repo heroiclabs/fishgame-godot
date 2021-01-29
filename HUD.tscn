@@ -1,7 +1,9 @@
-[gd_scene load_steps=3 format=2]
+[gd_scene load_steps=5 format=2]
 
 [ext_resource path="res://HUD.gd" type="Script" id=1]
 [ext_resource path="res://assets/fonts/monogram.tres" type="DynamicFont" id=2]
+[ext_resource path="res://assets/ui/close.png" type="Texture" id=3]
+[ext_resource path="res://assets/ui/mute.png" type="Texture" id=4]
 
 [node name="HUD" type="CanvasLayer"]
 script = ExtResource( 1 )
@@ -19,13 +21,29 @@ align = 1
 visible = false
 anchor_left = 1.0
 anchor_right = 1.0
-margin_left = -25.0
+margin_left = -44.0
 margin_top = 2.0
 margin_right = -2.0
-margin_bottom = 32.0
+margin_bottom = 38.0
+focus_mode = 0
 custom_fonts/font = ExtResource( 2 )
-text = "X"
+enabled_focus_mode = 0
+icon = ExtResource( 3 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="MuteButton" type="Button" parent="."]
+margin_left = 2.0
+margin_top = 2.0
+margin_right = 44.0
+margin_bottom = 38.0
+focus_mode = 0
+toggle_mode = true
+enabled_focus_mode = 0
+icon = ExtResource( 4 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
 [connection signal="pressed" from="BackButton" to="." method="_on_BackButton_pressed"]
+[connection signal="toggled" from="MuteButton" to="." method="_on_MuteButton_toggled"]
