@@ -57,12 +57,20 @@ Controls
 Playing the game from source
 ----------------------------
 
-The game has a couple of dependencies:
+### Dependencies ###
 
 * [Godot](https://godotengine.org/download) 3.2.3 or later.
-* A Nakama server to connect to. For testing/learning purposes, it's recommended to [install Nakama locally with Docker](https://heroiclabs.com/docs/install-docker-quickstart/).
+* A Nakama server (version 2.15.0 or later) to connect to.
 
-To run the game:
+The easiest way to setup a Nakama server locally for testing/learning purposes is [via Docker](https://heroiclabs.com/docs/install-docker-quickstart/), and in fact, there is a `docker-compose.yml` included in the source code of "Fish Game".
+
+So, if you have [Docker Compose](https://docs.docker.com/compose/install/) installed on your system, all you need to do is navigate to the directory where you put the "Fish Game" source code and run this command:
+
+```
+docker-compose up -d
+```
+
+### Running the game ###
 
 1. Download the source code to your computer
 2. Open Godot and "Import" the project
@@ -71,10 +79,11 @@ To run the game:
 
 ### Setting up the leaderboard ###
 
-If you're connecting to your own Nakama server, the "Leaderboard" won't work
-until you first create it on your server.
+The "Leaderboard" requires a small Nakama module to create the leaderboard on the server before the game can use it.
 
-To do that:
+If you used the `docker-compose.yml` file included in the source, this will be included automatically!
+
+But if you setup your Nakam server in a different way, you'll need to:
 
 1. Create a file called `fish_game.lua` with the following contents:
 
@@ -86,9 +95,7 @@ To do that:
     end)
     ```
 2. Place it in the `modules/` directory where your Nakama server keeps its
-data. If you're using the [docker-compose configuration from the Nakama
-documentation](https://heroiclabs.com/docs/install-docker-quickstart/#running-nakama-with-docker-compose)
-this will be under the same directory with the `docker-compose.yml` file.
+data.
 
 3. Then restart your Nakama server.
 
