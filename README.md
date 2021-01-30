@@ -81,25 +81,9 @@ docker-compose up -d
 
 ### Setting up the leaderboard ###
 
-The "Leaderboard" requires a small Nakama module to create the leaderboard on the server before the game can use it.
+If you didn't use the `docker-compose.yml` included with "Fish Game", then the "Leaderboard" won't work until you first create it on your server.
 
-If you used the `docker-compose.yml` file included in the source, this will be included automatically!
-
-But if you setup your Nakam server in a different way, you'll need to:
-
-1. Create a file called `fish_game.lua` with the following contents:
-
-    ```lua
-    local nk = require("nakama")
-    
-    nk.run_once(function(context)
-    	nk.leaderboard_create("fish_game_wins", false, "desc", "incr")
-    end)
-    ```
-2. Place it in the `modules/` directory where your Nakama server keeps its
-data.
-
-3. Then restart your Nakama server.
+To do that, copy the `nakama/data/modules/fish_game.lua` file to the `modules/` directory where your Nakama server keeps its data, and then restart your Nakama server.
 
 _Note: The game will play fine without the leaderboard._
 
