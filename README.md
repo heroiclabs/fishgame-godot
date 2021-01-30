@@ -59,6 +59,8 @@ Playing the game from source
 
 ### Dependencies ###
 
+You'll need:
+
 * [Godot](https://godotengine.org/download) 3.2.3 or later.
 * A Nakama server (version 2.15.0 or later) to connect to.
 
