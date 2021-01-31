@@ -9,6 +9,8 @@ const CREDENTIALS_FILENAME = 'user://credentials.json'
 var email: String = ''
 var password: String = ''
 
+var _reconnect: bool = false
+
 func _ready() -> void:
 	var file = File.new()
 	if file.file_exists(CREDENTIALS_FILENAME):
@@ -31,8 +33,10 @@ func _save_credentials() -> void:
 	file.store_line(JSON.print(credentials))
 	file.close()
 
-func initialize(switch_to_login: bool = true) -> void:
-	if switch_to_login:
+func initialize(info: Dictionary = {}) -> void:
+	_reconnect = info.get('reconnect', false)
+	
+	if info.get('switch_to_login', true):
 		tab_container.current_tab = 0
 	
 		# If we have a stored email and password, attempt to login straight away.
@@ -53,12 +57,18 @@ func do_login(save_credentials: bool = false) -> void:
 		# user can attempt to correct them.
 		email = ''
 		password = ''
+		
+		# We always set Online.nakama_session in case something is yielding
+		# on the "session_changed" signal.
+		Online.nakama_session = null
 	else:
 		if save_credentials:
 			_save_credentials()
 		Online.nakama_session = nakama_session
 		UI.hide_message()
-		UI.show_screen("MatchScreen")
+		
+		if not _reconnect:
+			UI.show_screen("MatchScreen")
 
 func _on_LoginButton_pressed() -> void:
 	email = login_email_field.text
@@ -86,7 +96,7 @@ func _on_Create_Account_pressed() -> void:
 		elif msg == '':
 			msg = "Unable to create account"
 		UI.show_message(msg)
-		UI.show_screen("ConnectionScreen", [false])
+		UI.show_screen("ConnectionScreen", [{ switch_to_login = true }])
 	else:
 		if save_credentials:
 			_save_credentials()
