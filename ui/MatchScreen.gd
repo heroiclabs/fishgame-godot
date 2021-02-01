@@ -16,8 +16,12 @@ func _on_match_button_pressed(mode) -> void:
 	# If our session has expired, show the ConnectionScreen again.
 	if Online.nakama_session == null or Online.nakama_session.is_expired():
 		UI.show_message("Login session has expired")
-		UI.show_screen("ConnectionScreen")
-		return
+		UI.show_screen("ConnectionScreen", [{ reconnect = true }])
+		
+		# Wait to see if we get a new valid session.
+		yield(Online, "session_changed")
+		if Online.nakama_session == null:
+			return
 	
 	# Connect socket to realtime Nakama API if not connected.
 	if not Online.is_nakama_socket_connected():
