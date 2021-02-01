@@ -96,7 +96,11 @@ func _on_Create_Account_pressed() -> void:
 		elif msg == '':
 			msg = "Unable to create account"
 		UI.show_message(msg)
-		UI.show_screen("ConnectionScreen", [{ switch_to_login = true }])
+		UI.show_screen("ConnectionScreen", [{ switch_to_login = false }])
+		
+		# We always set Online.nakama_session in case something is yielding
+		# on the "session_changed" signal.
+		Online.nakama_session = null
 	else:
 		if save_credentials:
 			_save_credentials()
