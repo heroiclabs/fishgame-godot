@@ -2,7 +2,7 @@
 
 [ext_resource path="res://assets/fonts/monogram_extended.ttf" type="DynamicFontData" id=1]
 [ext_resource path="res://assets/theme.tres" type="Theme" id=2]
-[ext_resource path="res://ui/TitleScreen.gd" type="Script" id=3]
+[ext_resource path="res://main/screens/TitleScreen.gd" type="Script" id=3]
 
 [sub_resource type="DynamicFont" id=1]
 size = 160

@@ -1,7 +1,8 @@
 extends Node2D
 
 onready var game = $Game
-onready var ready_screen = $UILayer/ReadyScreen
+onready var ui_layer: UILayer = $UILayer
+onready var ready_screen = $UILayer/Screens/ReadyScreen
 onready var music := $Music
 
 var players := {}
@@ -12,24 +13,10 @@ var players_score := {}
 var match_started := false
 
 func _ready() -> void:
-	UI.setup($UILayer, $HUD)
-	
 	OnlineMatch.connect("error", self, "_on_OnlineMatch_error")
 	OnlineMatch.connect("disconnected", self, "_on_OnlineMatch_disconnected")
-	OnlineMatch.connect("match_created", self, "_on_OnlineMatch_created")
-	OnlineMatch.connect("match_joined", self, "_on_OnlineMatch_joined")
-	OnlineMatch.connect("matchmaker_matched", self, "_on_OnlineMatch_matchmaker_matched")
+	OnlineMatch.connect("player_status_changed", self, "_on_OnlineMatch_player_status_changed")
 	OnlineMatch.connect("player_left", self, "_on_OnlineMatch_player_left")
-	
-	# Replace Nakama server information with values in Build.gd, which will be
-	# filled in by the build system for production builds.
-	Online.nakama_server_key = Build.NAKAMA_SERVER_KEY
-	Online.nakama_host = Build.NAKAMA_HOST
-	Online.nakama_port = Build.NAKAMA_PORT
-	Online.nakama_scheme = 'https' if Build.NAKAMA_USE_SSL else 'http'
-	
-	# Set the client version based on value from the build.
-	OnlineMatch.client_version = Build.CLIENT_VERSION
 	
 	randomize()
 	music.play_random()
@@ -47,8 +34,8 @@ func _get_custom_rpc_methods() -> Array:
 func _on_TitleScreen_play_local() -> void:
 	GameState.online_play = false
 	
-	UI.hide_screen()
-	UI.show_back_button()
+	ui_layer.hide_screen()
+	ui_layer.show_back_button()
 	
 	start_game()
 
@@ -58,41 +45,33 @@ func _on_TitleScreen_play_online() -> void:
 	# Show the game map in the background because we have nothing better.
 	game.reload_map()
 	
-	UI.show_screen("MatchScreen")
+	ui_layer.show_screen("ConnectionScreen")
 
 func _on_UILayer_change_screen(name: String, _screen) -> void:
-	if name == 'MatchScreen' or name == 'LeaderboardScreen':
-		if not Online.nakama_session or Online.nakama_session.is_expired():
-			# If we were previously connected, then show a message.
-			if Online.nakama_session:
-				UI.show_message("Login session has expired")
-			UI.show_screen("ConnectionScreen")
-	
 	if name == 'TitleScreen':
-		UI.hide_back_button()
+		ui_layer.hide_back_button()
 	else:
-		UI.show_back_button()
+		ui_layer.show_back_button()
 	
 	if name != 'ReadyScreen':
 		if match_started:
 			match_started = false
 			music.play_random()
 
-func _on_HUD_back_button() -> void:
-	UI.hide_message()
+func _on_UILayer_back_button() -> void:
+	ui_layer.hide_message()
 	
 	stop_game()
 	
 	if GameState.online_play:
 		OnlineMatch.leave()
 	
-	var current_screen_name = UI.ui_layer.current_screen_name
-	if current_screen_name in ['ConnectionScreen', 'MatchScreen', 'CreditsScreen']:
-		UI.show_screen("TitleScreen")
+	if ui_layer.current_screen_name in ['ConnectionScreen', 'MatchScreen', 'CreditsScreen']:
+		ui_layer.show_screen("TitleScreen")
 	elif not GameState.online_play:
-		UI.show_screen("TitleScreen")
+		ui_layer.show_screen("TitleScreen")
 	else:
-		UI.show_screen("MatchScreen")
+		ui_layer.show_screen("MatchScreen")
 
 func _on_ReadyScreen_ready_pressed() -> void:
 	OnlineMatch.custom_rpc_sync(self, "player_ready", [OnlineMatch.get_my_session_id()])
@@ -103,28 +82,15 @@ func _on_ReadyScreen_ready_pressed() -> void:
 
 func _on_OnlineMatch_error(message: String):
 	if message != '':
-		UI.show_message(message)
-	UI.show_screen("MatchScreen")
+		ui_layer.show_message(message)
+	ui_layer.show_screen("MatchScreen")
 
 func _on_OnlineMatch_disconnected():
 	#_on_OnlineMatch_error("Disconnected from host")
 	_on_OnlineMatch_error('')
 
-func _on_OnlineMatch_created(match_id: String):
-	UI.show_screen("ReadyScreen", [{}, match_id, true])
-	UI.show_back_button()
-
-func _on_OnlineMatch_joined(match_id: String):
-	UI.show_screen("ReadyScreen", [{}, match_id, true])
-	UI.show_back_button()
-
-func _on_OnlineMatch_matchmaker_matched(_players: Dictionary):
-	UI.show_screen("ReadyScreen", [_players])
-	UI.hide_message()
-	UI.show_back_button()
-
 func _on_OnlineMatch_player_left(player) -> void:
-	UI.show_message(player.username + " has left")
+	ui_layer.show_message(player.username + " has left")
 	
 	game.kill_player(player.peer_id)
 	
@@ -177,9 +143,9 @@ func restart_game() -> void:
 	start_game()
 
 func _on_Game_game_started() -> void:
-	UI.hide_screen()
-	UI.hide_all()
-	UI.show_back_button()
+	ui_layer.hide_screen()
+	ui_layer.hide_all()
+	ui_layer.show_back_button()
 	
 	if not match_started:
 		match_started = true
@@ -189,7 +155,7 @@ func _on_Game_player_dead(player_id: int) -> void:
 	if GameState.online_play:
 		var my_id = OnlineMatch.get_network_unique_id()
 		if player_id == my_id:
-			UI.show_message("You lose!")
+			ui_layer.show_message("You lose!")
 
 func _on_Game_game_over(player_id: int) -> void:
 	players_ready.clear()
@@ -215,9 +181,9 @@ func update_wins_leaderboard() -> void:
 
 func show_winner(name: String, session_id: String = '', score: int = 0, is_match: bool = false) -> void:
 	if is_match:
-		UI.show_message(name + " WINS THE WHOLE MATCH!")
+		ui_layer.show_message(name + " WINS THE WHOLE MATCH!")
 	else:
-		UI.show_message(name + " wins this round!")
+		ui_layer.show_message(name + " wins this round!")
 	
 	yield(get_tree().create_timer(2.0), "timeout")
 	if not game.game_started:
@@ -228,12 +194,12 @@ func show_winner(name: String, session_id: String = '', score: int = 0, is_match
 			stop_game()
 			if session_id == OnlineMatch.my_session_id:
 				update_wins_leaderboard()
-			UI.show_screen("MatchScreen")
+			ui_layer.show_screen("MatchScreen")
 		else:
 			ready_screen.hide_match_id()
 			ready_screen.reset_status("Waiting...")
 			ready_screen.set_score(session_id, score)
-			UI.show_screen("ReadyScreen")
+			ui_layer.show_screen("ReadyScreen")
 	else:
 		restart_game()
 

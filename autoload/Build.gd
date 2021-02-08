@@ -1,8 +1,5 @@
 extends Node
 
-const NAKAMA_HOST := 'localhost'
-const NAKAMA_PORT := 7350
-const NAKAMA_SERVER_KEY := 'defaultkey'
-const NAKAMA_USE_SSL := false
-
-const CLIENT_VERSION := 'dev'
+#####
+# NOTE: This file is replaced by the build system. DO NOT EDIT!
+#####

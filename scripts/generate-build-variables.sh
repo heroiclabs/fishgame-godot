@@ -21,12 +21,13 @@ fi
 cat << EOF > autoload/Build.gd
 extends Node
 
-const NAKAMA_HOST := '$NAKAMA_HOST'
-const NAKAMA_PORT := $NAKAMA_PORT
-const NAKAMA_SERVER_KEY := '$NAKAMA_SERVER_KEY'
-const NAKAMA_USE_SSL := true
-
-const CLIENT_VERSION := '$CLIENT_VERSION'
+func _ready() -> void:
+	Online.nakama_host = '$NAKAMA_HOST'
+	Online.nakama_port = $NAKAMA_PORT
+	Online.nakama_server_key = '$NAKAMA_SERVER_KEY'
+	Online.nakama_scheme = 'https'
+	
+	OnlineMatch.client_version = '$CLIENT_VERSION'
 
 EOF
 

@@ -1,6 +1,6 @@
-extends Control
+extends "res://main/Screen.gd"
 
-var PeerStatus = preload("res://ui/PeerStatus.tscn");
+var PeerStatus = preload("res://main/screens/PeerStatus.tscn");
 
 onready var ready_button := $Panel/ReadyButton
 onready var match_id_container := $Panel/MatchIDContainer
@@ -18,7 +18,11 @@ func _ready() -> void:
 	OnlineMatch.connect("match_ready", self, "_on_OnlineMatch_match_ready")
 	OnlineMatch.connect("match_not_ready", self, "_on_OnlineMatch_match_not_ready")
 
-func initialize(players: Dictionary = {}, match_id: String = '', clear: bool = false) -> void:
+func _show_screen(info: Dictionary = {}) -> void:
+	var players: Dictionary = info.get("players", {})
+	var match_id: String = info.get("match_id", '')
+	var clear: bool = info.get("clear", false)
+	
 	if players.size() > 0 or clear:
 		clear_players()
 	

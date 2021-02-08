@@ -1,6 +1,6 @@
-extends Control
+extends "res://main/Screen.gd"
 
-var LeaderboardRecord = preload("res://ui/LeaderboardRecord.tscn")
+var LeaderboardRecord = preload("res://main/screens/LeaderboardRecord.tscn")
 
 onready var record_container = $PanelContainer/VBoxContainer/Panel/ScrollContainer/VBoxContainer
 
@@ -12,13 +12,18 @@ func clear_records() -> void:
 		record_container.remove_child(child)
 		child.queue_free()
 
-func initialize() -> void:
-	UI.hide_message()
+func _show_screen(info: Dictionary = {}) -> void:
+	ui_layer.hide_message()
+	
+	# If our session has expired, show the ConnectionScreen again.
+	if Online.nakama_session == null or Online.nakama_session.is_expired():
+		ui_layer.show_screen("ConnectionScreen", { reconnect = true, next_screen = "LeaderboardScreen" })
+		return
 	
 	var result: NakamaAPI.ApiLeaderboardRecordList = yield(Online.nakama_client.list_leaderboard_records_async(Online.nakama_session, 'fish_game_wins'), "completed")
 	if result.is_exception():
-		UI.show_message("Unable to retrieve leaderboard")
-		UI.show_screen("MatchScreen")
+		ui_layer.show_message("Unable to retrieve leaderboard")
+		ui_layer.show_screen("MatchScreen")
 	
 	clear_records()
 	for record in result.records:
