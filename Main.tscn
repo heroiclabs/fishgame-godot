@@ -8,7 +8,7 @@
 [ext_resource path="res://main/screens/ReadyScreen.tscn" type="PackedScene" id=6]
 [ext_resource path="res://main/screens/TitleScreen.tscn" type="PackedScene" id=7]
 [ext_resource path="res://assets/fonts/monogram.tres" type="DynamicFont" id=8]
-[ext_resource path="res://Music.gd" type="Script" id=9]
+[ext_resource path="res://main/Music.gd" type="Script" id=9]
 [ext_resource path="res://assets/music/BUILD UP.ogg" type="AudioStream" id=10]
 [ext_resource path="res://assets/music/THEME #1.ogg" type="AudioStream" id=11]
 [ext_resource path="res://assets/music/DOMEFIGHTERS.ogg" type="AudioStream" id=12]
