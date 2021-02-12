@@ -175,7 +175,7 @@ func _on_Game_game_over(player_id: int) -> void:
 func update_wins_leaderboard() -> void:
 	if not Online.nakama_session or Online.nakama_session.is_expired():
 		# If our session has expired, then wait until a new session is setup.
-		yield(Online, "session_changed")
+		yield(Online, "session_connected")
 	
 	Online.nakama_client.write_leaderboard_record_async(Online.nakama_session, 'fish_game_wins', 1)
 
