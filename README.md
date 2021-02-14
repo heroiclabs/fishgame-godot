@@ -72,12 +72,16 @@ So, if you have [Docker Compose](https://docs.docker.com/compose/install/) insta
 docker-compose up -d
 ```
 
-### Running the game ###
+### Running the game from source ###
 
-1. Download the source code to your computer
-2. Open Godot and "Import" the project
-3. Edit the [autoload/Build.gd](https://github.com/heroiclabs/fishgame-godot/blob/main/autoload/Build.gd) file and replace the constants with the right values for your Nakama server. If you're running a Nakama server locally with the default settings, then you shouldn't need to change anything.
-4. Press F5 or click the play button in the upper-right corner to start the game
+1. Download the source code to your computer.
+2. Open Godot and "Import" the project.
+3. (Optional) Edit the
+[autoload/Online.gd](https://github.com/heroiclabs/fishgame-godot/blob/main/autoload/Online.gd)
+file and replace the variables at the top with the right values for your Nakama server.
+If you're running a Nakama server locally with the default settings, then you
+shouldn't need to change anything.
+4. Press F5 or click the play button in the upper-right corner to start the game.
 
 ### Setting up the leaderboard ###
 
