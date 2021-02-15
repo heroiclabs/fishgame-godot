@@ -1,0 +1,10 @@
+{
+	"name": "fishgame-godot-tutorial",
+	"version": "1.0.0",
+	"dependencies": {
+		"marked": "^1.2.7"
+	},
+	"scripts": {
+		"build": "marked --gfm -i tutorial.md -o tutorial.html && cat header.html tutorial.html footer.html > tutorial-styled.html"
+	}
+}

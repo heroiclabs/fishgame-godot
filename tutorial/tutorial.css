@@ -1,0 +1,64 @@
+
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono&family=Newsreader:wght@400;700&family=Roboto&display=swap');
+
+body {
+  font-family: 'Roboto', sans-serif;
+  font-size: 18px;
+  line-height: 1.6em;
+}
+
+.content {
+  max-width: 50em;
+  margin: 50px auto;
+}
+
+h1, h2, h3, h4, h5 {
+  font-family: 'Newsreader', serif;
+  margin-bottom: 5px;
+  line-height: 1.1em;
+}
+
+h1 {
+  font-size: 46px;
+  line-height: 1.1em;
+  margin-bottom: 30px;
+}
+
+h2 {
+  font-size: 42px;
+  border-bottom: 3px solid black;
+  margin-bottom: 5px;
+}
+
+h3 {
+  font-size: 32px;
+}
+
+h4 {
+  font-weight: bold;
+  font-size: 22px;
+}
+
+pre, code {
+  background-color: #e4e6e8;
+}
+
+pre {
+  padding: 10px;
+  overflow: auto;
+  font-family: 'JetBrains Mono', monospace;
+  line-height: 1.4em;
+}
+code {
+  padding: 2px 5px;
+  font-family: 'JetBrains Mono', monospace;
+}
+pre code {
+  padding: 0;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+}
+
