@@ -2,7 +2,7 @@
 =====================
 
 **"Fish Game" for Godot** is a 2-4 player online game built in the
-[Godot](https://godotengine.org/) game engine, created as a demostration of
+[Godot](https://godotengine.org/) game engine, created as a demonstration of
 [Nakama](https://heroiclabs.com/), an open-source scalable game server.
 
 ![Animated GIF showing gameplay](assets/screenshots/gameplay.gif)
@@ -90,4 +90,14 @@ If you didn't use the `docker-compose.yml` included with "Fish Game", then the "
 To do that, copy the `nakama/data/modules/fish_game.lua` file to the `modules/` directory where your Nakama server keeps its data, and then restart your Nakama server.
 
 _Note: The game will play fine without the leaderboard._
+
+License
+-------
+
+This project is licensed under the [PolyForm Noncommercial License](https://github.com/heroiclabs/fishgame-godot/blob/main/LICENSE.txt), with the following exceptions:
+
+* The [Godot client for Nakama](https://github.com/heroiclabs/nakama-godot) included in [addons/com.heroiclabs.nakama](https://github.com/heroiclabs/fishgame-godot/tree/main/addons/com.heroiclabs.nakama) is licensed under the Apache 2.0 License.
+* The [Snopek State Machine](https://gitlab.com/snopek-games/godot-state-machine) included in [addons/snopek-state-machine](https://github.com/heroiclabs/fishgame-godot/tree/main/addons/snopek-state-machine) is licensed under the MIT License.
+* The UI code copied from [WebRTC and Nakama addon for godot](https://gitlab.com/snopek-games/godot-nakama-webrtc) included in [main/](https://github.com/heroiclabs/fishgame-godot/tree/main/main) is licensed under the MIT License.
+* The code in [autoloads/](https://github.com/heroiclabs/fishgame-godot/tree/main/autoload) directory is licensed under the Apache 2.0 License.
 
