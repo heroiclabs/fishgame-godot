@@ -122,6 +122,7 @@ stream = ExtResource( 11 )
 bus = "Music"
 
 [node name="Tween" type="Tween" parent="Music"]
+
 [connection signal="game_over" from="Game" to="." method="_on_Game_game_over"]
 [connection signal="game_started" from="Game" to="." method="_on_Game_game_started"]
 [connection signal="player_dead" from="Game" to="." method="_on_Game_player_dead"]

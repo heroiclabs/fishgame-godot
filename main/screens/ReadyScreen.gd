@@ -11,10 +11,9 @@ signal ready_pressed ()
 
 func _ready() -> void:
 	clear_players()
-	
+
 	OnlineMatch.connect("player_joined", self, "_on_OnlineMatch_player_joined")
 	OnlineMatch.connect("player_left", self, "_on_OnlineMatch_player_left")
-	OnlineMatch.connect("player_status_changed", self, "_on_OnlineMatch_player_status_changed")
 	OnlineMatch.connect("match_ready", self, "_on_OnlineMatch_match_ready")
 	OnlineMatch.connect("match_not_ready", self, "_on_OnlineMatch_match_not_ready")
 
@@ -22,19 +21,19 @@ func _show_screen(info: Dictionary = {}) -> void:
 	var players: Dictionary = info.get("players", {})
 	var match_id: String = info.get("match_id", '')
 	var clear: bool = info.get("clear", false)
-	
+
 	if players.size() > 0 or clear:
 		clear_players()
-	
-	for session_id in players:
-		add_player(session_id, players[session_id]['username'])
-	
+
+	for peer_id in players:
+		add_player(peer_id, players[peer_id]['username'])
+
 	if match_id:
 		match_id_container.visible = true
 		match_id_label.text = match_id
 	else:
 		match_id_container.visible = false
-	
+
 	ready_button.grab_focus()
 
 func clear_players() -> void:
@@ -46,25 +45,25 @@ func clear_players() -> void:
 func hide_match_id() -> void:
 	match_id_container.visible = false
 
-func add_player(session_id: String, username: String) -> void:
-	if not status_container.has_node(session_id):
+func add_player(peer_id: int, username: String) -> void:
+	if not status_container.has_node(str(peer_id)):
 		var status = PeerStatus.instance()
 		status_container.add_child(status)
 		status.initialize(username)
-		status.name = session_id
+		status.name = str(peer_id)
 
-func remove_player(session_id: String) -> void:
-	var status = status_container.get_node(session_id)
+func remove_player(peer_id: int) -> void:
+	var status = status_container.get_node(str(peer_id))
 	if status:
 		status.queue_free()
 
-func set_status(session_id: String, status: String) -> void:
-	var status_node = status_container.get_node(session_id)
+func set_status(peer_id: int, status: String) -> void:
+	var status_node = status_container.get_node(str(peer_id))
 	if status_node:
 		status_node.set_status(status)
 
-func get_status(session_id: String) -> String:
-	var status_node = status_container.get_node(session_id)
+func get_status(peer_id: int) -> String:
+	var status_node = status_container.get_node(str(peer_id))
 	if status_node:
 		return status_node.status
 	return ''
@@ -73,8 +72,8 @@ func reset_status(status: String) -> void:
 	for child in status_container.get_children():
 		child.set_status(status)
 
-func set_score(session_id: String, score: int) -> void:
-	var status_node = status_container.get_node(session_id)
+func set_score(peer_id: int, score: int) -> void:
+	var status_node = status_container.get_node(str(peer_id))
 	if status_node:
 		status_node.set_score(score)
 
@@ -94,18 +93,10 @@ func _on_MatchCopyButton_pressed() -> void:
 #####
 
 func _on_OnlineMatch_player_joined(player) -> void:
-	add_player(player.session_id, player.username)
+	add_player(player.peer_id, player.username)
 
 func _on_OnlineMatch_player_left(player) -> void:
-	remove_player(player.session_id)
-
-func _on_OnlineMatch_player_status_changed(player, status) -> void:
-	if status == OnlineMatch.PlayerStatus.CONNECTED:
-		# Don't go backwards from 'READY!'
-		if get_status(player.session_id) != 'READY!':
-			set_status(player.session_id, 'Connected.')
-	elif status == OnlineMatch.PlayerStatus.CONNECTING:
-		set_status(player.session_id, 'Connecting...')
+	remove_player(player.peer_id)
 
 func _on_OnlineMatch_match_ready(_players: Dictionary) -> void:
 	set_ready_button_enabled(true)
