@@ -7,7 +7,7 @@ onready var score_label := $ScoreLabel
 var status := "" setget set_status
 var score := 0 setget set_score
 
-func initialize(_name: String, _status: String = "Connecting...", _score: int = 0) -> void:
+func initialize(_name: String, _status: String = "Connected.", _score: int = 0) -> void:
 	name_label.text = _name
 	self.status = _status
 	self.score = _score

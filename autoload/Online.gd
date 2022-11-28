@@ -36,19 +36,14 @@ func get_nakama_client() -> NakamaClient:
 			nakama_scheme,
 			Nakama.DEFAULT_TIMEOUT,
 			NakamaLogger.LOG_LEVEL.ERROR)
-	
+
 	return nakama_client
 
 func set_nakama_session(_nakama_session: NakamaSession) -> void:
-	# Close out the old socket.
-	if nakama_socket:
-		nakama_socket.close()
-		nakama_socket = null
-	
 	nakama_session = _nakama_session
-	
+
 	emit_signal("session_changed", nakama_session)
-	
+
 	if nakama_session and not nakama_session.is_exception() and not nakama_session.is_expired():
 		emit_signal("session_connected", nakama_session)
 
@@ -58,12 +53,12 @@ func connect_nakama_socket() -> void:
 	if _nakama_socket_connecting:
 		return
 	_nakama_socket_connecting = true
-	
+
 	var new_socket = Nakama.create_socket_from(nakama_client)
 	yield(new_socket.connect_async(nakama_session), "completed")
 	nakama_socket = new_socket
 	_nakama_socket_connecting = false
-	
+
 	emit_signal("socket_connected", nakama_socket)
 
 func is_nakama_socket_connected() -> bool:
