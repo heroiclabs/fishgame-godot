@@ -217,11 +217,11 @@ func _on_match_joined() -> void:
 	players[my_peer_id] = player
 	emit_signal("match_joined", nakama_multiplayer_bridge.match_id, match_mode)
 
-master func _boot_with_error(msg: String) -> void:
+puppet func _boot_with_error(msg: String) -> void:
 	leave()
 	emit_signal("error", msg)
 
-master func _check_client_version(host_client_version: String) -> void:
+puppet func _check_client_version(host_client_version: String) -> void:
 	if client_version != host_client_version:
 		leave()
 		emit_signal("error", "Client version doesn't match host")
